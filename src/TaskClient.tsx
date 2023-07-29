@@ -2,7 +2,7 @@
 
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Task from './task';
 import { PortsGlobal } from './PortsGlobal';
 
@@ -11,7 +11,9 @@ import './TaskClient.css';
 
 
 const port = PortsGlobal.serverPort;
-let url = `http://localhost:${port}/tasks`;
+
+const hostname = window.location.hostname;
+const baseURL = `http://${hostname}:${port}`;
 
 
 // a component that has a button to get the tasks from the server
@@ -36,48 +38,73 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     // get the local host name to bypass CORS
     let localHostName = window.location.hostname;
     console.log(`localHostName: ${localHostName}`);
+    console.log(`TaskClient rendering with documentName=${documentName}`);
+    // rest of component code...
 
     const [tasks, setTasks] = useState<Task[]>([]);
     const [taskName, setTaskName] = useState<string>('');
+    const [docName, setDocName] = useState<string>(documentName);
+    console.log(`TaskClient mounted with documentName=${documentName}`);
 
 
-    function getTasks() {
-        fetch(url)
+
+
+    const getTasks = useCallback(() => {
+        const requestURL = baseURL + "/tasks"
+        const jsonDocumentName = JSON.stringify({
+            "documentName": documentName
+        })
+        console.log("get result------->" + jsonDocumentName)
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "documentName": documentName
+            })
+        }
+
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
             }
             ).then((json) => {
-                console.log(`json: ${json}`);
+
                 setTasks(json);
             }
             ).catch((error) => {
                 console.log(`getTask error: ${error}`);
             }
             );
+    }, [documentName]);
 
-    }
-
-    // call getTasks on component mount and every 3 seconds thereafter
+    // force a refresh 3 times a second.
     useEffect(() => {
-        getTasks();
-        const intervalId = setInterval(() => {
+        const interval = setInterval(() => {
             getTasks();
         }, 333);
-        return () => clearInterval(intervalId);
-    }, []);
+        return () => {
+            clearInterval(interval);
+        };
+    }, [documentName, getTasks]);
+
 
 
     function requestTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/assign/${taskId}/${userName}`;
+        const path = `/tasks/assign/${taskId}/${userName}`
+        const requestURL = baseURL + path;
         const options = {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -93,15 +120,18 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     }
 
     function updateTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/update/${taskId}/${userName}/1`;
+        const path = `/tasks/update/${taskId}/${userName}/1`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -117,15 +147,19 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     }
 
     function releaseTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/remove/${taskId}/${userName}`;
+        const path = `/tasks/remove/${taskId}/${userName}`;
+        const requestURL = baseURL + path;
+
         const options = {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -141,15 +175,18 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     }
 
     function completeTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/complete/${taskId}/${userName}`;
+        const path = `/tasks/complete/${taskId}/${userName}`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -164,40 +201,19 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             );
     }
 
-    function deleteTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/delete/${taskId}/${userName}`;
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({})
-        }
-        fetch(url, options)
-            .then((response) => {
-                console.log(`response: ${response}`);
-                return response.json();
-            }
-            ).then((json) => {
-                console.log(`json: ${json}`);
-                getTasks();
-            }
-            ).catch((error) => {
-                console.log(`deleteTask error: ${error}`);
-            }
-            );
-    }
-
     function clearServer() {
-        const url = `http://${localHostName}:${port}/tasks`;
+        const path = `/tasks`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -212,16 +228,46 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             );
     }
 
+    function deleteTask(taskId: string) {
+        const path = `/tasks/delete/${taskId}/${userName}`;
+        const requestURL = baseURL + path;
+        const options = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "documentName": documentName
+            })
+        }
+        fetch(requestURL, options)
+            .then((response) => {
+                console.log(`response: ${response}`);
+                return response.json();
+            }
+            ).then((json) => {
+                console.log(`json: ${json}`);
+                getTasks();
+            }
+            ).catch((error) => {
+                console.log(`deleteTask error: ${error}`);
+            }
+            );
+    }
+
     function makeData() {
-        const url = `http://${localHostName}:${port}/makedata`;
+        const path = `/makedata`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -236,9 +282,11 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             );
     }
 
+
     function addTask() {
 
-        const url = `http://${localHostName}:${port}/tasks/add/${taskName}`;
+        const path = `/tasks/add/${taskName}`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'POST',
             headers: {
@@ -248,7 +296,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
                 "documentName": documentName
             })
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -325,6 +373,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
                             <button onClick={() => deleteTask(task.id)}>
                                 Delete
                             </button>
+
                         </td>
                     </tr>
                 </table>
@@ -339,6 +388,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
                     </td>
                     <td className="label">
                         {task.owner} is working
+
                     </td>
                 </tr>
             </table>

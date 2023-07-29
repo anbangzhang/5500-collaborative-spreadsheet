@@ -1,171 +1,171 @@
-
-// the file is a JSON file
-
-import exp from 'constants';
+/**
+ * A database that maintains multiple documents
+ * 
+ * The documents are all the documents in __dirname/documents/*.json
+ * 
+ * The database imports Document from document.ts
+ * 
+ * the data base has call through functions for each of the functions in document.ts
+ * 
+ * the database has a function to get a document by name
+ * 
+ * the database has a function to get a list of all the documents
+ * 
+ * the database has a function to create a new document
+ * 
+ * for the purposes of this demo we will not have a function to delete a document
+ * 
+ * In this demo code we are using the tasks.json file as the default document
+ * 
+ * This will allow us to demonstrate how to refactor this code.
+ */
 import * as fs from 'fs';
 import * as path from 'path';
+import Document from './document';
 import Task from './task';
 
-// a class that stores a list of tasks.  A task has a name, a time allocated to it, and a completion flag
-// the class also has methods to add, remove, and update tasks
-// when a new task is added it generates a unique id for the task (6 digit string) and returns it
-// the class also has methods to save and load the list of tasks to a file
-// the default location for the file is in the same directory as the executable
-// the file name for the data base is tasks.json 
-// the tasks are stored in a map that is indexed by the task id
-// the database provides different documents.   The location of the 
-// documents is in the directory "documents" in the same directory as the executable
-
-class Database {
-    private _tasks: Map<string, Task>;
-    private _filename: string;
-    private _id: number = 0;
+export class Database {
+    private _documents: Map<string, Document>;
     private _documentDirectory: string = path.join(__dirname, "documents");
 
-    // default document name is tasks
-    constructor(documentName: string = "tasks") {
-        this._tasks = new Map<string, Task>();
-        // remove any / or \ from the document name
-        documentName = documentName.replace(/[\/\\]/g, "");
 
-        this._filename = path.join(this._documentDirectory, documentName + ".json");
-        this._load();
+    constructor() {
+        this._documents = new Map<string, Document>();
         this._initializeDirectory();
+        this._loadDocuments();
     }
 
     private _initializeDirectory() {
         if (!fs.existsSync(this._documentDirectory)) {
             fs.mkdirSync(this._documentDirectory, { recursive: true });
         }
+
     }
 
+    private _loadDocuments() {
+        let files = fs.readdirSync(this._documentDirectory);
 
-    private _load() {
-        try {
-            let data = fs.readFileSync(this._filename, 'utf8');
-            let tasks = JSON.parse(data);
-            for (let task of tasks) {
-                let newTask = new Task(task._name, task._time, task._complete);
-                this._tasks.set(task._id, newTask);
-            }
-            this._id = tasks.length;
-        } catch (err) {
-            // create the empty file
-            this._save();
+        for (let file of files) {
+            let documentName = path.parse(file).name;
+            let document = new Document(documentName);
+            this._documents.set(documentName, document);
         }
     }
 
-    private _save() {
-        let tasks = [];
-        for (let [id, task] of this._tasks) {
-            tasks.push({
-                _id: id,
-                _name: task.name,
-                _time: task.time,
-                _complete: task.complete
-            });
+    public getDocument(documentName: string): Document {
+        const document = this._documents.get(documentName);
+        if (document) {
+            return document;
         }
-        let data = JSON.stringify(tasks);
-        fs.writeFileSync(this._filename, data);
+        throw new Error(`Document ${documentName} does not exist`);
+
     }
 
-    private _generateId(): string {
-        // pad the id with leading zeros
-        let id = this._id.toString().padStart(6, "0");
-        this._id++;
-        return id;
-    }
-
-
-    public get tasks(): Map<string, Task> {
-        return this._tasks;
-    }
-
-    public reset() {
-        this._tasks.clear();
-        this._id = 0;
-        this._save();
-    }
-
-    public makeData() {
-        this.reset();
-        this.addTask("Task 1");
-        this.addTask("Task 2");
-        this.addTask("Task 3");
-        this.addTask("Task 4");
-        this.addTask("Task 5");
-    }
-
-    public addTask(name: string): string {
-        let id = this._generateId();
-        let task = new Task(name, 0, false);
-        task.id = id;
-        this._tasks.set(id, task);
-        this._save();
-        return id;
-    }
-
-    public deleteTask(id: string, user: string): boolean {
-        let task = this._tasks.get(id);
-        if (task) {
-            if (task.owner === user) {
-                this._tasks.delete(id);
-                this._save();
-                return true;
-            }
+    public getDocuments(): Document[] {
+        let documents = [];
+        for (let [name, document] of this._documents) {
+            documents.push(document);
         }
-        return false;
+        return documents;
     }
 
-    public addUserToTask(taskId: string, user: string): boolean {
-        console.log(`>>>>>>>> attempting to assign ${user} to ${taskId}`);
-        let task = this._tasks.get(taskId);
-        if (task) {
-            const result = task.requestOwner(user);
-            if (result) {
-                this._save();
-            }
-            return result;
+    public createDocument(documentName: string = "tasks"): Document {
+        let document = new Document(documentName);
+        this._documents.set(documentName, document);
+        return document;
+    }
+
+    public getTasks(documentName: string): Map<string, Task> {
+        // check to see if the document exists
+        if (!this._documents.has(documentName)) {
+            // create the document
+            this.createDocument(documentName);
         }
-        return false;
+        let document = this.getDocument(documentName);
+        return document.getTasks();
     }
 
-    public removeUserFromTask(taskId: string, user: string) {
-        let task = this._tasks.get(taskId);
-        if (task) {
-            if (task.owner == user) {
-                task.clearOwner();
-                this._save();
-            }
+    public reset(documentName: string = "tasks") {
+        // check to see if the document exists
+        if (!this._documents.has(documentName)) {
+            // create the document
+            this.createDocument(documentName);
         }
+        let document = this.getDocument(documentName);
+        document.reset();
     }
 
-    public addTimeToTask(taskId: string, userId: string, time: number): boolean {
-        let task = this._tasks.get(taskId);
-        if (task) {
-            if (task.owner == userId) {
-                task.time += time;
-                console.log(`added ${time} to ${taskId} for ${userId}`);
-                this._save();
-                return true;
-            }
+    public makeData(documentName: string = "tasks") {
+        // check to see if the document exists
+        if (!this._documents.has(documentName)) {
+            // create the document
+            this.createDocument(documentName);
         }
-        return false;
+        let document = this.getDocument(documentName);
+        document.makeData();
     }
 
-    public markTaskComplete(taskId: string, userId: string): boolean {
-        let task = this._tasks.get(taskId);
-        if (task) {
-            if (task.owner == userId) {
-                task.complete = true;
-                this._save();
-                return true;
-            }
+    public addTask(name: string, documentName: string = "tasks"): string {
+        // check to see if the document exists
+        console.log("----->" + documentName + "<-----")
+        if (!this._documents.has(documentName)) {
+            // create the document
+            this.createDocument(documentName);
         }
-        return false;
+        let document = this.getDocument(documentName);
+        return document.addTask(name);
     }
 
+    // make the shim for all the database functions that 
+    public deleteTask(id: string, user: string, documentName: string = "tasks") {
+        // check to see if the document exists
+        if (!this._documents.has(documentName)) {
+            // create the document
+            this.createDocument(documentName);
+        }
+        let document = this.getDocument(documentName);
+        document.deleteTask(id, user);
+    }
+
+    public addUserToTask(id: string, user: string, documentName: string = "tasks"): boolean {
+        // check to see if the document exists
+        if (!this._documents.has(documentName)) {
+            // create the document
+            this.createDocument(documentName);
+        }
+        let document = this.getDocument(documentName);
+        return document.addUserToTask(id, user);
+    }
+
+    public removeUserFromTask(id: string, user: string, documentName: string = "tasks") {
+        // check to see if the document exists
+        if (!this._documents.has(documentName)) {
+            // create the document
+            this.createDocument(documentName);
+        }
+        let document = this.getDocument(documentName);
+        document.removeUserFromTask(id, user);
+    }
+
+    public addTimeToTask(id: string, user: string, time: number, documentName: string = "tasks",): boolean {
+        // check to see if the document exists
+        if (!this._documents.has(documentName)) {
+            // create the document
+            this.createDocument(documentName);
+        }
+        let document = this.getDocument(documentName);
+        return document.addTimeToTask(id, user, time);
+    }
+
+    public markTaskComplete(id: string, user: string, documentName: string = "tasks"): boolean {
+        // check to see if the document exists
+        if (!this._documents.has(documentName)) {
+            // create the document
+            this.createDocument(documentName);
+        }
+        let document = this.getDocument(documentName);
+        return document.markTaskComplete(id, user);
+    }
 
 }
-
-export { Task, Database }
+export default Database;

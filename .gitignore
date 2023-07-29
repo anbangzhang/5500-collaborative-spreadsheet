@@ -9,8 +9,15 @@
 # production
 /build
 
+# the server documents any document in the /documents folder
+
+
+/src/documents
+
+
 
 # misc
 .DS_Store
 .env
 npm-debug.log
+
