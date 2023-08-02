@@ -2,24 +2,31 @@
 // Library imports
 import * as fs from 'fs';
 import * as path from 'path';
-import * as express from 'express';
 import Database from '../database';
 import GetSheetRequest from './request/getSheetReqeust';
-import GetSheetResponse from './response/GetSheetResponse';
+import GetSheetResponse from './response/getSheetResponse';
 import GetSheetListResponse from './response/getSheetListResponse';
 import DeleteSheetRequest from './request/deleteSheetRequest';
 import DeleteSheetResponse from './response/deleteSheetResponse';
 import CreateSheetRequest from './request/createSheetRequest';
 import CreateSheetResponse from './response/createSheetResponse';
+import UpdateCellRequest from './request/updateCellRequest';
+import LockCellRequest from './request/lockCellRequest';
+import CellLockService from './cellLockService';
+import SheetMemoryCacheService from './sheetMemoryCacheService';
 
 // ManagerService
 //
 
 export class ManagerService {
     private database: any;
+    private cellLockService: CellLockService;
+    private sheetMemoryCacheService: SheetMemoryCacheService;
 
     constructor() {
         this.database = new Database();
+        this.cellLockService = new CellLockService();
+        this.sheetMemoryCacheService = new SheetMemoryCacheService();
     }
 
     // get sheet list
@@ -27,6 +34,11 @@ export class ManagerService {
     // returns a list of all the sheets in the database
     public getSheetList(): GetSheetListResponse {
         const response = new GetSheetListResponse();
+        // load all the sheets from the database
+        // if the sheet is cached in the sheetMemoryCacheService, use that
+        // else calculate the sheetMemory
+        // cache the sheetMemory in the sheetMemoryCacheService
+        // return the response
         return response;
     }
 
@@ -38,7 +50,7 @@ export class ManagerService {
         return new GetSheetResponse(document.getID(), document.getName(), document.getOwner());
     }
 
-    // create sheet
+    // creates a new sheet with the given name and owner
     public createSheet(req: CreateSheetRequest): CreateSheetResponse {
         const response = new CreateSheetResponse();
         return response;
@@ -50,8 +62,23 @@ export class ManagerService {
         return response;
     }
 
+    // clear sheet list
+    public clearSheetList(): boolean {
+        return true;
+    }
 
-    public updateCell(req: any): boolean {
+    // lock cell
+    public lockCell(req: LockCellRequest): boolean {
+        return this.cellLockService.lockCell(req.getSheetID(), req.getCellLabel(), req.getUser());
+    }
+
+    // release cell
+    public releaseCell(req: LockCellRequest): boolean {
+        return this.cellLockService.unlockCell(req.getSheetID(), req.getCellLabel(), req.getUser());
+    }
+
+    // update cell
+    public updateCell(req: UpdateCellRequest): boolean {
         return true;
     }
     

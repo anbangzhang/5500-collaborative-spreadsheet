@@ -1,13 +1,13 @@
 
-export class UpdateCellRequest {
+export class LockCellRequest {
     private sheetID: string;
     private cellLabel: string;
-    private operator: string;
+    private user: string;
 
-    constructor(sheetID: string, cellLabel: string, operator: string) {
+    constructor(sheetID: string, cellLabel: string, user: string) {
         this.sheetID = sheetID;
         this.cellLabel = cellLabel;
-        this.operator = operator;
+        this.user = user;
     }
 
     public getSheetID(): string {
@@ -18,8 +18,8 @@ export class UpdateCellRequest {
         return this.cellLabel;
     }
 
-    public getOperator(): string {
-        return this.operator;
+    public getUser(): string {
+        return this.user;
     }
 
     public setSheetID(sheetID: string) {
@@ -30,10 +30,10 @@ export class UpdateCellRequest {
         this.cellLabel = cellLabel;
     }
 
-    public setOperator(operator: string) {
-        this.operator = operator;
+    public setUser(user: string) {
+        this.user = user;
     }
     
 }
 
-export default UpdateCellRequest;
+export default LockCellRequest;
