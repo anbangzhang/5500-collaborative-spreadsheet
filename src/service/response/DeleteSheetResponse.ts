@@ -1,11 +1,11 @@
 
 export class DeleteSheetResponse {
     private success: boolean;
-    private message: string;
+    private errorMessage: string;
 
     constructor() {
         this.success = true;
-        this.message = "";
+        this.errorMessage = "";
     }
 
     public getSuccess(): boolean {
@@ -13,7 +13,7 @@ export class DeleteSheetResponse {
     }
 
     public getErrorMessage(): string {
-        return this.message;
+        return this.errorMessage;
     }
 
     public setSuccess(success: boolean) {
@@ -21,7 +21,7 @@ export class DeleteSheetResponse {
     }
 
     public setErrorMessage(message: string) {
-        this.message = message;
+        this.errorMessage = message;
     }
 
 }

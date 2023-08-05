@@ -96,7 +96,11 @@ app.post('/lockCell', (req: express.Request, res: express.Response) => {
 
     const request = new LockCellRequest(req.body.sheet_id, req.body.cell_label, user);
     const success = managerService.lockCell(request);
-    res.json(success);
+    if (success) {
+        res.json({'success': success, 'errorMessage': ''});
+    } else {
+        res.json({'success': success, 'errorMessage': 'Cell is already locked'});
+    }
 });
 
 app.post('/releaseCell', (req: express.Request, res: express.Response) => {
@@ -110,7 +114,11 @@ app.post('/releaseCell', (req: express.Request, res: express.Response) => {
 
     const request = new LockCellRequest(req.body.sheet_id, req.body.cell_label, user);
     const success = managerService.releaseCell(request);
-    res.json(success);
+    if (success) {
+        res.json({'success': success, 'errorMessage': ''});
+    } else {
+        res.json({'success': success, 'errorMessage': 'Cell is not locked by you'});
+    }
 });
 
 app.post('/updateCell', (req: express.Request, res: express.Response) => {
