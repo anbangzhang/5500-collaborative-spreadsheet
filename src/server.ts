@@ -16,6 +16,12 @@ import cors from 'cors';
 import { PortsGlobal } from './PortsGlobal';
 
 import Database from './database';
+import ManagerService from './service/ManagerService';
+import GetSheetRequest from './service/request/GetSheetReqeust';
+import CreateSheetRequest from './service/request/CreateSheetRequest';
+import DeleteSheetRequest from './service/request/DeleteSheetRequest';
+import LockCellRequest from './service/request/LockCellRequest';
+import UpdateCellRequest from './service/request/UpdateCellRequest';
 
 // define a debug flag to turn on debugging
 const debug = true;
@@ -39,34 +45,53 @@ app.use(cors());
 
 
 const db = new Database();
+const managerService = new ManagerService();
 
-
-
-app.post('/cleardata', (req: express.Request, res: express.Response) => {
-    let documentName = req.body.documentName
-    db.reset(documentName);
-    res.json({ success: true });
+app.post('/getSheetList', (req: express.Request, res: express.Response) => {
+    const response = managerService.getSheetList();
+    res.json(response);
 });
 
-
-app.post('/makedata', (req: express.Request, res: express.Response) => {
-    let documentName = req.body.documentName
-    console.log(`makedata ${documentName}`)
-    db.makeData(documentName);
-    res.json({ success: true });
-});
-// ********************************************
-// the above is not good practice
-// ********************************************
-// ********************************************
-
-// delete /tasks clears the list of tasks
-app.delete('/tasks', (req: express.Request, res: express.Response) => {
-    let documentName = req.body.documentName
-    db.reset(documentName);
-    res.json({ success: true });
+app.post('/getSheet', (req: express.Request, res: express.Response) => {
+    const request =  new GetSheetRequest(req.body.sheet_id);
+    const response = managerService.getSheet(request);
+    res.json(response);
 });
 
+app.post('/createSheet', (req: express.Request, res: express.Response) => {
+    let token = req.headers.token;
+    const request = new CreateSheetRequest(req.body.sheet_name, '');
+    const response = managerService.createSheet(request);
+    res.json(response);
+});
+
+app.post('/deleteSheet', (req: express.Request, res: express.Response) => {
+    let token = req.headers.token;
+    const request = new DeleteSheetRequest(req.body.sheet_id, '');
+    const response = managerService.deleteSheet(request);
+    res.json(response);
+});
+
+app.post('/lockCell', (req: express.Request, res: express.Response) => {
+    let token = req.headers.token;
+    const request = new LockCellRequest(req.body.sheet_id, req.body.cell_label, '');
+    const success = managerService.lockCell(request);
+    res.json(success);
+});
+
+app.post('/releaseCell', (req: express.Request, res: express.Response) => {
+    let token = req.headers.token;
+    const request = new LockCellRequest(req.body.sheet_id, req.body.cell_label, '');
+    const success = managerService.releaseCell(request);
+    res.json(success);
+});
+
+app.post('/updateCell', (req: express.Request, res: express.Response) => {
+    let token = req.headers.token;
+    const request = new UpdateCellRequest(req.body.sheet_id, req.body.cell_label, req.body.operator, '');
+    const success = managerService.updateCell(request);
+    res.json(success);
+});
 
 
 // get /tasks returns a list of all the tasks
@@ -84,77 +109,6 @@ app.post('/tasks', (req: express.Request, res: express.Response) => {
         });
     }
     res.json(tasks);
-});
-
-
-// post a new task
-app.post('/tasks/add/:name', (req: express.Request, res: express.Response) => {
-    let name = req.params.name;
-    let documentName = req.body.documentName
-
-    const id = db.addTask(name, documentName);
-    console.log(`added task ${id} ${name}`)
-    res.json({ id: id });
-});
-
-// assign user to the task
-app.put('/tasks/assign/:id/:user', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let documentName = req.body.documentName
-
-    console.log(`attempting to assign ${user} to ${id}`);
-    const success = db.addUserToTask(id, user, documentName);
-    if (success) {
-        console.log(`assigned ${user} to ${id}`);
-    } else {
-        console.log(`failed to assign ${user} to ${id}`);
-    }
-    res.json({ success: success });
-});
-
-// remove user from the task
-app.put('/tasks/remove/:id/:user', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let documentName = req.body.documentName
-    const success = db.removeUserFromTask(id, user, documentName);
-    res.json({ success: success });
-});
-
-// add time to the task
-app.put('/tasks/update/:id/:user/:time', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let time = Number(req.params.time);
-    let documentName = req.body.documentName
-    const success = db.addTimeToTask(id, user, time, documentName);
-    if (success) {
-        console.log(`added ${time} to ${id} for ${user}`);
-    } else {
-        console.log(`failed to add ${time} to ${id} for ${user}`);
-    }
-    res.json({ success: success });
-});
-
-
-// delete a task from the list if it is owed by the user
-app.delete('/tasks/delete/:id/:user', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let documentName = req.body.documentName
-    const success = db.deleteTask(id, user, documentName);
-    res.json({ success: success });
-});
-
-
-// mark task as complete
-app.put('/tasks/complete/:id/:user', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let documentName = req.body.documentName
-    const success = db.markTaskComplete(id, user, documentName);
-    res.json({ success: success });
 });
 
 

@@ -3,9 +3,9 @@ export class CreateSheetRequest {
     private name: string;
     private user: string;
 
-    constructor() {
-        this.name = "";
-        this.user = "";
+    constructor(name: string, user: string) {
+        this.name = name;
+        this.user = user;
     }
 
     public setName(name: string) {

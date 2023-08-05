@@ -3,9 +3,9 @@ export class DeleteSheetRequest {
     private id: string;
     private user: string;
 
-    constructor() {
-        this.id = "";
-        this.user = "";
+    constructor(id: string, user: string) {
+        this.id = id;
+        this.user = user;
     }
 
     public setSheetID(id: string) {

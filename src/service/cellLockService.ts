@@ -33,6 +33,16 @@ export class CellLockService {
         return `${sheetId}:${cellLabel}`;
     }
 
+    public getAllLockedCells(sheetId: string): Map<string, string> {
+        const lockedCells = new Map<string, string>();
+        this.sheetMap.forEach((user, lockId) => {
+            if (lockId.startsWith(sheetId)) {
+                lockedCells.set(lockId.split(':')[1], user);
+            }
+        });
+        return lockedCells;
+    }
+
 }
 
 export default CellLockService;

@@ -3,17 +3,18 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import Database from '../database';
-import GetSheetRequest from './request/getSheetReqeust';
-import GetSheetResponse from './response/getSheetResponse';
-import GetSheetListResponse from './response/getSheetListResponse';
-import DeleteSheetRequest from './request/deleteSheetRequest';
-import DeleteSheetResponse from './response/deleteSheetResponse';
-import CreateSheetRequest from './request/createSheetRequest';
-import CreateSheetResponse from './response/createSheetResponse';
-import UpdateCellRequest from './request/updateCellRequest';
-import LockCellRequest from './request/lockCellRequest';
-import CellLockService from './cellLockService';
-import SheetMemoryCacheService from './sheetMemoryCacheService';
+import GetSheetRequest from './request/GetSheetReqeust';
+import GetSheetResponse from './response/GetSheetResponse';
+import GetSheetListResponse from './response/GetSheetListResponse';
+import DeleteSheetRequest from './request/DeleteSheetRequest';
+import DeleteSheetResponse from './response/DeleteSheetResponse';
+import CreateSheetRequest from './request/CreateSheetRequest';
+import CreateSheetResponse from './response/CreateSheetResponse';
+import UpdateCellRequest from './request/UpdateCellRequest';
+import LockCellRequest from './request/LockCellRequest';
+import CellLockService from './CellLockService';
+import SheetMemoryCacheService from './SheetMemoryCacheService';
+import CellVO from './model/CellVO';
 
 // ManagerService
 //
@@ -29,16 +30,14 @@ export class ManagerService {
         this.sheetMemoryCacheService = new SheetMemoryCacheService();
     }
 
+    
     // get sheet list
     //
     // returns a list of all the sheets in the database
     public getSheetList(): GetSheetListResponse {
         const response = new GetSheetListResponse();
         // load all the sheets from the database
-        // if the sheet is cached in the sheetMemoryCacheService, use that
-        // else calculate the sheetMemory
-        // cache the sheetMemory in the sheetMemoryCacheService
-        // return the response
+
         return response;
     }
 
@@ -46,8 +45,33 @@ export class ManagerService {
     //
     // returns a sheet with the given id
     public getSheet(req: GetSheetRequest): GetSheetResponse {
-        const document = this.database.getDocument(req.getSheetID());
-        return new GetSheetResponse(document.getID(), document.getName(), document.getOwner());
+        // if the sheet is cached in the sheetMemoryCacheService, use that
+        // else calculate the sheetMemory
+        // cache the sheetMemory in the sheetMemoryCacheService
+        // return the response
+        let sheet = this.database.getSheet(req.getSheetID());
+        let response = new GetSheetResponse(sheet.getID(), sheet.getName(), sheet.getOwner());
+        let cellVOs: CellVO[][] = [];
+        const sheetMemory = this.sheetMemoryCacheService.getSheetMemory(req.getSheetID());
+        if (!sheetMemory) {
+            const sheetMemory = this.sheetMemoryCacheService.getSheetMemory(req.getSheetID());
+            this.sheetMemoryCacheService.setSheetMemory(req.getSheetID(), sheetMemory);
+
+        } else {
+            const sheetMemory = this.database.getSheetMemory(req.getSheetID());
+            this.sheetMemoryCacheService.setSheetMemory(req.getSheetID(), sheetMemory);
+        }
+
+        for (let column = 0; column < sheetMemory.getNumColumns(); column++) {
+            cellVOs[column] = [];
+            for (let row = 0; row < sheetMemory.getNumRows(); row++) {
+                cellVOs[column][row] = new CellVO(sheetMemory.getCells()[column][row]);
+            }
+        }
+        response.setCells(cellVOs);
+        response.setOccupiedCells(this.cellLockService.getAllLockedCells(req.getSheetID()));
+
+        return response;
     }
 
     // creates a new sheet with the given name and owner

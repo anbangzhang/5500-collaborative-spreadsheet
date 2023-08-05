@@ -2,8 +2,8 @@
 export class GetSheetRequest {
     private id: string;
 
-    constructor() {
-        this.id = "";
+    constructor(id: string) {
+        this.id = id;
     }
 
     public setSheetID(id: string) {

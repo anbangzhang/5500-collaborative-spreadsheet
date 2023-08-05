@@ -1,16 +1,21 @@
 
+import CellVO from "../model/CellVO";
+
 export class GetSheetResponse {
     private id: string;
     private name: string;
     private owner: string;
-        // key: cellLabel
+    private cells: CellVO[][]; 
+    // key: cellLabel
     // value: user
     private occupiedCells: Map<string, string>;
 
+    
     constructor(id: string, name: string, owner: string) {
         this.id = id;
         this.name = name;
         this.owner = owner;
+        this.cells = [];
         this.occupiedCells = new Map<string, string>();
     }
 
@@ -36,6 +41,14 @@ export class GetSheetResponse {
 
     public setOwner(owner: string) {
         this.owner = owner;
+    }
+
+    public getCells(): CellVO[][] {
+        return this.cells;
+    }
+
+    public setCells(cells: CellVO[][]) {
+        this.cells = cells;
     }
 
     public getOccupiedCells(): Map<string, string> {
