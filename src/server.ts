@@ -42,7 +42,7 @@ app.use((req, res, next) => {
 app.use(cors());
 
 function decryptToken(token: string) {
-    return window.atob(token);
+    return atob(token);
 }
 
 const managerService = new ManagerService();
