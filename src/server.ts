@@ -41,7 +41,9 @@ app.use((req, res, next) => {
 
 app.use(cors());
 
-
+function decryptToken(token: string) {
+    return window.atob(token);
+}
 
 const managerService = new ManagerService();
 
@@ -58,42 +60,72 @@ app.post('/getSheet', (req: express.Request, res: express.Response) => {
 
 app.post('/createSheet', (req: express.Request, res: express.Response) => {
     let token = req.headers.token;
-    // decrypt token to get the user name
-    let user = 'test';
-    const request = new CreateSheetRequest(req.body.sheet_name, user);
+    let user: string;
+    if (!token || token instanceof Array) {
+        user = 'Anonymous';
+    } else {
+        user = decryptToken(token);
+    }
+    
+    const request = new CreateSheetRequest(req.body.name, user);
     const response = managerService.createSheet(request);
     res.json(response);
 });
 
 app.post('/deleteSheet', (req: express.Request, res: express.Response) => {
     let token = req.headers.token;
-    const request = new DeleteSheetRequest(req.body.sheet_id, '');
+    let user: string;
+    if (!token || token instanceof Array) {
+        user = 'Anonymous';
+    } else {
+        user = decryptToken(token);
+    }
+    const request = new DeleteSheetRequest(req.body.sheet_id, user);
     const response = managerService.deleteSheet(request);
     res.json(response);
 });
 
 app.post('/lockCell', (req: express.Request, res: express.Response) => {
     let token = req.headers.token;
-    const request = new LockCellRequest(req.body.sheet_id, req.body.cell_label, '');
+    let user: string;
+    if (!token || token instanceof Array) {
+        user = 'Anonymous';
+    } else {
+        user = decryptToken(token);
+    }
+
+    const request = new LockCellRequest(req.body.sheet_id, req.body.cell_label, user);
     const success = managerService.lockCell(request);
     res.json(success);
 });
 
 app.post('/releaseCell', (req: express.Request, res: express.Response) => {
     let token = req.headers.token;
-    const request = new LockCellRequest(req.body.sheet_id, req.body.cell_label, '');
+    let user: string;
+    if (!token || token instanceof Array) {
+        user = 'Anonymous';
+    } else {
+        user = decryptToken(token);
+    }
+
+    const request = new LockCellRequest(req.body.sheet_id, req.body.cell_label, user);
     const success = managerService.releaseCell(request);
     res.json(success);
 });
 
 app.post('/updateCell', (req: express.Request, res: express.Response) => {
     let token = req.headers.token;
-    const request = new UpdateCellRequest(req.body.sheet_id, req.body.cell_label, req.body.operator, '');
+    let user: string;
+    if (!token || token instanceof Array) {
+        user = 'Anonymous';
+    } else {
+        user = decryptToken(token);
+    }
+
+    const request = new UpdateCellRequest(req.body.sheet_id, req.body.cell_label, req.body.operator, user);
     const success = managerService.updateCell(request);
     res.json(success);
 });
-
-
 
 // get the port we should be using
 const port = PortsGlobal.serverPort;

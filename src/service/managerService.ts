@@ -1,7 +1,5 @@
 
 // Library imports
-import * as fs from 'fs';
-import * as path from 'path';
 import GetSheetRequest from './request/GetSheetReqeust';
 import GetSheetResponse from './response/GetSheetResponse';
 import GetSheetListResponse from './response/GetSheetListResponse';
