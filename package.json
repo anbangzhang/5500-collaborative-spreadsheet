@@ -28,7 +28,6 @@
     "start": "react-scripts start",
     "hello": "ts-node src/hello.ts",
     "server": "ts-node src/server.ts",
-    "simulator": "ts-node src/simulator.ts",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

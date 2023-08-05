@@ -8,7 +8,7 @@ export class GetSheetResponse {
     private cells: CellVO[][]; 
     // key: cellLabel
     // value: user
-    private occupiedCells: Map<string, string>;
+    private occupiedCells: {[key: string]: string};
 
     
     constructor(id: string, name: string, owner: string) {
@@ -16,7 +16,7 @@ export class GetSheetResponse {
         this.name = name;
         this.owner = owner;
         this.cells = [];
-        this.occupiedCells = new Map<string, string>();
+        this.occupiedCells = Object.create(null);
     }
 
     public getID(): string {
@@ -51,12 +51,10 @@ export class GetSheetResponse {
         this.cells = cells;
     }
 
-    public getOccupiedCells(): Map<string, string> {
-        return this.occupiedCells;
-    }
-
     public setOccupiedCells(occupiedCells: Map<string, string>) {
-        this.occupiedCells = occupiedCells;
+        for (let [k,v] of occupiedCells) {
+            this.occupiedCells[k] = v;
+        }
     }
 
 }
