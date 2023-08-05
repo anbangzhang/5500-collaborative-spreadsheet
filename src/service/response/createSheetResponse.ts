@@ -1,17 +1,17 @@
 
 export class CreateSheetResponse {
-    private suscess: boolean;
+    private success: boolean;
     private errorMessage: string;
     private id: string;
 
     constructor() {
-        this.suscess = false;
+        this.success = false;
         this.errorMessage = "";
         this.id = "";
     }
 
-    public getSuscess(): boolean {
-        return this.suscess;
+    public getSuccess(): boolean {
+        return this.success;
     }
 
     public getErrorMessage(): string {
@@ -22,8 +22,8 @@ export class CreateSheetResponse {
         return this.id;
     }
 
-    public setSuscess(suscess: boolean) {
-        this.suscess = suscess;
+    public setSuccess(suscess: boolean) {
+        this.success = suscess;
     }
 
     public setErrorMessage(errorMessage: string) {

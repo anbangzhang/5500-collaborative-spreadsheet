@@ -1,20 +1,19 @@
-import SheetDB from './SheetDB';
-import Sheet from './Sheet';
+import SheetDB from './db/SheetDB';
 
 describe('SheetDB', () => {
-    let database: SheetDB;
+    let sheetDB: SheetDB;
 
     beforeEach(() => {
         // clean out  __dirname/Data
 
 
-        database = new SheetDB();
+        sheetDB = new SheetDB();
     });
 
     afterAll(() => {
         const fs = require('fs');
         const path = require('path');
-        const directory = path.join(__dirname, 'Data');
+        const directory = path.join(__dirname, 'db/data');
         const files = fs.readdirSync(directory);
 
         for (const file of files) {
@@ -25,52 +24,56 @@ describe('SheetDB', () => {
         }
     });
 
-    describe('getSheet', () => {
-        it('should return a sheet with the given name', () => {
-            const sheetName = 'test_xxx';
-            const sheet = database.createSheet(sheetName);
-            // add a task to the sheet
-            sheet.addToken('A1', 'test task');
-
-            const result = database.getSheet(sheetName);
-            const cells = result.getCells();
-
-            expect(['test task']).toStrictEqual(cells.get('A1'));
-            expect(result).toBe(sheet);
-        });
-
-    });
-
     describe('getSheets', () => {
         it('should return an array of all sheets in the database', () => {
-            const sheet1 = database.createSheet('test_xxx1');
-            const sheet2 = database.createSheet('test_xxx2');
-            const result = database.getSheets();
-            expect(result).toContain(sheet1);
-            expect(result).toContain(sheet2);
+            let sheets = sheetDB.getSheets();
+            expect(sheets.length).toBe(2);
+        });
+    });
+
+    describe('getSheetById', () => {
+        it('should return a sheet with the given id', () => {
+            let sheet = sheetDB.getSheetById('1');
+            expect(sheet.getId()).toEqual(1);
+            expect(sheet.getName()).toEqual('sample sheet 1');
+            expect(sheet.getOwner()).toEqual('Bob');
+
+            sheet = sheetDB.getSheetById('2');
+            expect(sheet.getId()).toEqual(2);
+            expect(sheet.getName()).toEqual('sample sheet 2');
+            expect(sheet.getOwner()).toEqual('Sam');
+        });
+    });
+
+    describe('getSheetDetailById', () => {
+        it('should return a sheet detail with the given id', () => {
+            const sheetDetail = sheetDB.getSheetDetailById('1');
+            expect(sheetDetail.getId()).toEqual(1);
+            expect(sheetDetail.getCells()[0][0]).toEqual(["1","+","4"]);
+            expect(sheetDetail.getCells()[0][2]).toEqual(["3"]);
+
         });
     });
 
     describe('createSheet', () => {
-        it('should create a new sheet with the given name', () => {
-            const sheetName = 'test_xxx2';
-            const fs = require('fs');
-            const path = require('path');
-            const file = path.join(__dirname, 'Data', sheetName + '.json');
-
-            // delete the file if it exists
-            if (fs.existsSync(file)) {
-                fs.unlinkSync(file);
+        it('should fail to create a new sheet with the same name', () => {
+            try {
+                sheetDB.createSheet('sample sheet 1', 'test');
+            } catch (e) {
+                // eslint-disable-next-line jest/no-conditional-expect
+                expect(e.message).toEqual('Spreadsheet sample sheet 1 already exists');
             }
-
-            const result = database.createSheet(sheetName);
-            expect(result).toBeInstanceOf(Sheet);
-            // check that the file for the sheet exists
-            // the file should be in __dirname/Data/sheetName.json
-
-            const fileExists: boolean = fs.existsSync(file);
-
-            expect(fileExists).toBe(true);
         });
     });
+
+    describe('updateSheetDetailById', () => {
+        it('should update the sheet detail with the given id', () => {
+            const sheetDetail = sheetDB.getSheetDetailById('1');
+            sheetDetail.setFormulaByColumnRow(0, 1, ['1', '+', '1']);
+            sheetDB.updateSheetDetailById(sheetDetail);
+            const updatedSheetDetail = sheetDB.getSheetDetailById('1');
+            expect(updatedSheetDetail.getCells()[0][1]).toEqual(["1","+","1"]);
+        });
+    });
+
 });

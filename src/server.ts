@@ -60,6 +60,8 @@ app.post('/getSheet', (req: express.Request, res: express.Response) => {
 
 app.post('/createSheet', (req: express.Request, res: express.Response) => {
     let token = req.headers.token;
+    // decrypt token to get the user name
+    let user = '';
     const request = new CreateSheetRequest(req.body.sheet_name, '');
     const response = managerService.createSheet(request);
     res.json(response);
