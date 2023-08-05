@@ -59,7 +59,7 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
         <Button
             text="AC/C"
             isDigit={false}
-            onClick={() => onCommandButtonClick(ButtonNames.cube)}
+            onClick={() => onCommandButtonClick(ButtonNames.allClear)} //TODO: add function
             className="button-operator"
             dataTestId="cube-button"
         />
@@ -85,18 +85,11 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
           dataTestId="nine-button"
         />
         <Button
-          text={ButtonNames.allClear}
-          isDigit={true}
-          onClick={() => onCommandButtonClick(ButtonNames.allClear)}
-          className="button-control"
-          dataTestId="all-clear-button"
-        />
-        <Button
-          text={ButtonNames.clear}
+          text="/"
           isDigit={false}
-          onClick={() => onCommandButtonClick(ButtonNames.clear)}
-          className="button-control"
-          dataTestId="clear-button"
+          onClick={onButtonClick}
+          className="button-operator"
+          dataTestId="divide-button"
         />
       </div>
 
@@ -129,13 +122,7 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
           className="button-operator"
           dataTestId="multiply-button"
         />
-        <Button
-          text="/"
-          isDigit={false}
-          onClick={onButtonClick}
-          className="button-operator"
-          dataTestId="divide-button"
-        />
+
       </div>
 
       <div className="buttons-row">

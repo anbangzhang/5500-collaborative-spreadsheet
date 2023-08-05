@@ -49,7 +49,7 @@ const managerService = new ManagerService();
 
 app.post('/getSheetList', (req: express.Request, res: express.Response) => {
     const response = managerService.getSheetList();
-    res.json(response);
+    res.json(response.getSheets());
 });
 
 app.post('/getSheet', (req: express.Request, res: express.Response) => {

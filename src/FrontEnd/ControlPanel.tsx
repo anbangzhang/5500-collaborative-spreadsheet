@@ -1,6 +1,5 @@
 // Interact with the server to get the spreadsheets
 import { useCallback, useEffect, useState } from "react";
-import { setInterval } from "timers/promises";
 import { PortsGlobal } from "../PortsGlobal";
 
 const port = PortsGlobal.serverPort;
@@ -8,26 +7,38 @@ const port = PortsGlobal.serverPort;
 const hostname = window.location.hostname;
 const baseURL = `http://${hostname}:${port}`;
 
-
 interface ControlPanelProps {
     resetURL: (sheetID: string) => void;
 }
 
+interface Sheet {
+    id: string;
+    name: string;
+    owner: string;
+  }
+
 export function ControlPanel( {resetURL}: ControlPanelProps) {
 
-    const [sheets, setSheets] = useState<string[]>([]);
+    const [sheets, setSheets] = useState<Sheet[]>([]);
     const [newSheetName, setNewSheetName] = useState<string>('');
+    const [showSheetList, setShowSheetList] = useState<boolean>(false);
 
-    const getSheets = useCallback(() => {
-        const requestURL = baseURL + '/sheets';
-
-        fetch(requestURL)
+    const getSheetList = useCallback(() => {
+        const requestURL = baseURL + '/getSheetList'
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
             })
             .then((json) => {
-                console.log(`json: ${json}`);
+                console.log(`json: ${JSON.stringify(json)}`);
+
                 setSheets(json);
             })
             .catch((error) => {
@@ -35,6 +46,9 @@ export function ControlPanel( {resetURL}: ControlPanelProps) {
             });
     }, []);
 
+    useEffect(() => {
+        getSheetList()
+    }, [getSheetList]);
 
     function getControlButtons() {
         return <div>
@@ -60,7 +74,7 @@ export function ControlPanel( {resetURL}: ControlPanelProps) {
                                     alert("Please enter a name for the new sheet!");
                                     return;
                                 }
-                                resetURL(newSheetName);
+                                //resetURL(newSheetName);
                             }}>
                                 Create new sheet
                             </button>
@@ -68,10 +82,10 @@ export function ControlPanel( {resetURL}: ControlPanelProps) {
                     </tr>
                     <tr>
                         <td>
-                            <button onClick={getSheetsDisplay}>List all sheets</button>
+                            <button onClick={() => setShowSheetList(true)}>List all sheets</button>
                         </td>
                         <td>
-                            <button onClick={clearSheetList}>Clear List</button>
+                            <button onClick={() => setShowSheetList(false)}>Clear List</button>
                         </td>
 
                     </tr>
@@ -80,39 +94,67 @@ export function ControlPanel( {resetURL}: ControlPanelProps) {
         </div>
     }
 
-
     // return a <ul> list of the sheets
     function getSheetsDisplay() {
         return <ul>
             {sheets.map((sheet) => {
-                return <li key={sheet}>
-                    {getSheetName(sheet)}
-                </li>
-            })}
+                return <li key={parseInt(sheet.id!, 10)}>
+                    <input
+                    type="text"
+                    defaultValue={sheet.name}
+                    readOnly={true}
+                    />
+                    </li>
+            })}            
         </ul>
-        //TODO: Add edit and delete buttons
     }
 
-    // return a text box containing a sheet's name
-    function getSheetName(sheet: string) {
-        return <input
-            type="text"
-            defaultValue={sheet}
-        />
-    }
-
-    function getEditSheet(sheetId: string) {
+    function getEditSheet(sheet: { id: string; name: string; owner: string; }) {
         return <button onClick={() =>
-            resetURL(sheetId)}>
+            resetURL(sheet.id)}>
             Edit
         </button>
     }
 
-    function getDeleteSheet(sheetId: string) {
+    function deleteSheet(sheet_id: string, user_name: string) {
+        const path = `/deleteSheet`;
+        const requestURL = baseURL + path;
+        const options = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': user_name//TODO: get token from local storage
+            },
+            body: JSON.stringify({
+                sheet_id: sheet_id
+            })
+        }
+        fetch(requestURL, options)
+            .then((response) => {
+                console.log(`response: ${response}`);
+                return response.json();
+            })
+            .then((json) => {
+                console.log(`json: ${json}`);
+            })
+            .catch((error) => {
+                console.log(`deleteSheet error: ${error}`);
+            });
+    }
+
+    function getDeleteSheet(sheet: { id: string; name: string; owner: string; }) {
         return <button onClick={() => 
-            deleteSheet(sheetId)}>
+            deleteSheet(sheet.id, sheet.owner)}>
             Delete
         </button>
     }
 
+    return <div>
+        <h2>Control Panel</h2>
+        {getControlButtons()}
+        {showSheetList && getSheetsDisplay()}
+    </div>
+
 }
+
+export default ControlPanel;

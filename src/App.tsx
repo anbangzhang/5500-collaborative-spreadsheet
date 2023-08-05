@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './App.css';
-import { TaskClient } from './TaskClient';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import { ControlPanel } from './FrontEnd/ControlPanel';
 
@@ -12,10 +11,10 @@ function App() {
 
   const [userName, setUserName] = useState('');
 
-  function resetURL(sheetID: string) {
+  function resetURL(sheet_id: string) {
     const currentURL = window.location.href;
     const index = currentURL.lastIndexOf('/');
-    const newURL = currentURL.substring(0, index + 1) + sheetID;
+    const newURL = currentURL.substring(0, index + 1) + sheet_id;
     window.history.pushState({}, '', newURL);
     window.location.reload();
   }
@@ -76,7 +75,6 @@ function App() {
   }
 
   function getSheetDisplay() {
-    <SheetClient />
 
   }
 
@@ -86,6 +84,7 @@ function App() {
         <header className="App-header">
           {getTitle()}
           {getLoginComponent()}
+          {getControlPanel()}
         </header>
       </div>
     </BrowserRouter>
