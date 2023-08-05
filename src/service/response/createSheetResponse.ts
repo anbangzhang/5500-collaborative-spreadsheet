@@ -18,6 +18,10 @@ export class CreateSheetResponse {
         return this.errorMessage;
     }
 
+    public setID(id: string) {
+        this.id = id;
+    }
+
     public getID(): string {
         return this.id;
     }

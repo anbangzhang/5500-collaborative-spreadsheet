@@ -33,10 +33,6 @@ export class SheetMemory {
     private _numRows: number;
     private _numColumns = 8;
 
-    private _currentRow = 0;
-    private _currentColumn = 0;
-
-
     constructor(columns: number, rows: number) {
 
         this._numColumns = columns;
@@ -80,57 +76,6 @@ export class SheetMemory {
         let [column, row] = Cell.cellToColumnRow(label);
         return this._cells[column][row];
     }
-
-    /**
-     * Get the coordinates of working cell
-     * 
-     * @returns number[]
-     */
-    getWorkingCellByCoordinates(): number[] {
-        return [this._currentColumn, this._currentRow];
-    }
-
-    /**
-     * Set the working cell at the given column and row
-     * 
-     * @param column number
-     * @param row number
-     */
-    setWorkingCellByCoordinates(column: number, row: number): void {
-        this._currentColumn = column;
-        this._currentRow = row;
-    }
-
-    /**
-     * Set the working cell by label
-     * 
-     * @param label string
-     */
-    setWorkingCellByLabel(label: string): void {
-        let column = label.charCodeAt(0) - 65;
-        let row = parseInt(label.slice(1)) - 1;
-        this._currentColumn = column;
-        this._currentRow = row;
-    }
-
-    /**
-     * Get the cell at the current row and column
-     * 
-     * @returns Cell
-     */
-    getCurrentCell(): Cell {
-        return this._cells[this._currentColumn][this._currentRow];
-    }
-
-    /**
-     * Set the cell at the current row and column
-     * 
-     * @param cell Cell
-     */
-    setCurrentCell(cell: Cell): void {
-        this._cells[this._currentColumn][this._currentRow] = cell;
-    }
-
     /**
      * Get the cells in the sheet
      * 
@@ -140,31 +85,8 @@ export class SheetMemory {
         return this._cells;
     }
 
-    /**
-     * Get the formula for the current cell
-     * 
-     * @returns string[]
-     */
-    getCurrentCellFormula(): string[] {
-        return this._cells[this._currentColumn][this._currentRow].getFormula();
-    }
-
-    /**
-     * Set the formual for the current cell
-     * 
-     * @param formula string
-     */
-    setCurrentCellFormula(formula: string []): void {
-        this._cells[this._currentColumn][this._currentRow].setFormula(formula);
-    }
-
-    /**
-     * Set the value for the current cell
-     * 
-     * @param value string
-     */
-    setCurrentCellValue(value: number): void {
-        this._cells[this._currentColumn][this._currentRow].setValue(value);
+    setCellFormulaByColumnRow(column: number, row: number, formula: string[]): void {
+        this._cells[column][row].setFormula(formula);
     }
 
     /**

@@ -15,7 +15,6 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { PortsGlobal } from './PortsGlobal';
 
-import Database from './database';
 import ManagerService from './service/ManagerService';
 import GetSheetRequest from './service/request/GetSheetReqeust';
 import CreateSheetRequest from './service/request/CreateSheetRequest';
@@ -44,7 +43,6 @@ app.use(cors());
 
 
 
-const db = new Database();
 const managerService = new ManagerService();
 
 app.post('/getSheetList', (req: express.Request, res: express.Response) => {
@@ -61,8 +59,8 @@ app.post('/getSheet', (req: express.Request, res: express.Response) => {
 app.post('/createSheet', (req: express.Request, res: express.Response) => {
     let token = req.headers.token;
     // decrypt token to get the user name
-    let user = '';
-    const request = new CreateSheetRequest(req.body.sheet_name, '');
+    let user = 'test';
+    const request = new CreateSheetRequest(req.body.sheet_name, user);
     const response = managerService.createSheet(request);
     res.json(response);
 });
@@ -95,23 +93,6 @@ app.post('/updateCell', (req: express.Request, res: express.Response) => {
     res.json(success);
 });
 
-
-// get /tasks returns a list of all the tasks
-app.post('/tasks', (req: express.Request, res: express.Response) => {
-    let tasks = [];
-    let documentName = req.body.documentName
-    let test = req.body.test
-    for (let [id, task] of db.getTasks(documentName)) {
-        tasks.push({
-            id: id,
-            name: task.name,
-            time: task.time,
-            complete: task.complete,
-            owner: task.owner
-        });
-    }
-    res.json(tasks);
-});
 
 
 // get the port we should be using

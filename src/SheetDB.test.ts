@@ -7,7 +7,7 @@ describe('SheetDB', () => {
         // clean out  __dirname/Data
 
 
-        sheetDB = new SheetDB();
+        sheetDB = new SheetDB(true);
     });
 
     afterAll(() => {
@@ -60,8 +60,10 @@ describe('SheetDB', () => {
             try {
                 sheetDB.createSheet('sample sheet 1', 'test');
             } catch (e) {
-                // eslint-disable-next-line jest/no-conditional-expect
-                expect(e.message).toEqual('Spreadsheet sample sheet 1 already exists');
+                if (e instanceof Error) {
+                    // eslint-disable-next-line jest/no-conditional-expect
+                    expect(e.message).toEqual('Spreadsheet sample sheet 1 already exists');
+                }
             }
         });
     });

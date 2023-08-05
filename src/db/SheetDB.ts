@@ -32,7 +32,12 @@ export class SheetDB {
     private _nextId: number = 1;
 
 
-    constructor() {
+    constructor(test?: boolean) {
+        if (test) {
+            this._sheetDirectory = path.join(__dirname, "test/data");
+            this._sheetFile = path.join(__dirname, "data/test_sheet.json");
+            this._sheetDetailFile = path.join(__dirname, "data/test_sheetDetail.json");
+        }
         this._initializeDirectory();
         this._loadSheets();
         this._loadSheetDetails();
@@ -76,7 +81,7 @@ export class SheetDB {
     }
 
 
-    public getSheet(sheetName: string): Sheet {
+    public getSheetByName(sheetName: string): Sheet {
         const sheet = this._sheets.find(sheet => sheet.getName() === sheetName);
         if (sheet) {
             return sheet;
@@ -91,6 +96,16 @@ export class SheetDB {
             return sheet;
         }
         throw new Error(`Spreadsheet Id:${id} does not exist`);
+    }
+
+    public deleteSheetById(id: string): void {
+        const index = this._sheets.findIndex(sheet => sheet.getId() == id);
+        if (index >= 0) {
+            this._sheets.filter(sheet => sheet.getId() != id);
+            this._sheetDetails.filter(detail => detail.getId() != id);
+            this.saveSheet();
+            this.saveSheetDetail();
+        }
     }
 
     public getSheetDetailById(id: string): SheetDetail {
@@ -113,7 +128,7 @@ export class SheetDB {
         // create the sheet
         let sheet = new Sheet(sheetName, owner, this._nextId.toString());
         this._sheets.push(sheet);
-        this._sheetDetails.push(new SheetDetail(this._nextId.toString(), []));
+        this._sheetDetails.push(new SheetDetail(this._nextId.toString()));
         this._nextId++;
         this.saveSheetDetail();
         this.saveSheet();

@@ -1,16 +1,16 @@
 
 export class GetSheetListResponse {
-    private sheets: [];
+    private sheets: { id: string; name: string; owner: string; }[];
 
     constructor() {
         this.sheets = [];
     }
 
-    public getSheets(): [] {
+    public getSheets(): { id: string; name: string; owner: string; }[] {
         return this.sheets;
     }
 
-    public setSheets(sheets: []): void {
+    public setSheets(sheets: { id: string; name: string; owner: string; }[]): void {
         this.sheets = sheets;
     }
 

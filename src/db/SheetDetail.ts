@@ -5,9 +5,19 @@ export class SheetDetail {
     //[col][row][formula]
     private _cells: string[][][];
 
-    constructor(id: string, cells: string[][][]) {
+    constructor(id: string, cells?: string[][][]) {
         this._id = id;
-        this._cells = cells;
+        if (cells) {
+            this._cells = cells;
+        } else {
+            this._cells = [];
+            for (let column = 0; column < 5; column++) {
+                this._cells[column] = [];
+                for (let row = 0; row < 4; row++) {
+                    this._cells[column][row] = [];
+                }
+            }
+        }
     }
   
     getId(): string {

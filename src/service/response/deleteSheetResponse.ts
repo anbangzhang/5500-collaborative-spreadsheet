@@ -1,26 +1,26 @@
 
 export class DeleteSheetResponse {
-    private suscess: boolean;
+    private success: boolean;
     private message: string;
 
-    constructor(suscess: boolean, message: string) {
-        this.suscess = suscess;
-        this.message = message;
+    constructor() {
+        this.success = true;
+        this.message = "";
     }
 
-    public getSuscess(): boolean {
-        return this.suscess;
+    public getSuccess(): boolean {
+        return this.success;
     }
 
-    public getMessage(): string {
+    public getErrorMessage(): string {
         return this.message;
     }
 
-    public setSuscess(suscess: boolean) {
-        this.suscess = suscess;
+    public setSuccess(success: boolean) {
+        this.success = success;
     }
 
-    public setMessage(message: string) {
+    public setErrorMessage(message: string) {
         this.message = message;
     }
 

@@ -6,11 +6,8 @@ export class SheetMemoryCacheService {
     // value: SheetMemory
     private sheetMemoryMap = new Map<string, SheetMemory>();
 
-    public getSheetMemory(sheetId: string): SheetMemory {
-        if (!this.sheetMemoryMap.has(sheetId)) {
-            this.sheetMemoryMap.set(sheetId, new SheetMemory(8, 8));
-        }
-        return this.sheetMemoryMap.get(sheetId)!;
+    public getSheetMemory(sheetId: string): SheetMemory | undefined {
+        return this.sheetMemoryMap.get(sheetId);
     }
 
     public setSheetMemory(sheetId: string, sheetMemory: SheetMemory): void {
