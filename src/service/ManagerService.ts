@@ -134,6 +134,11 @@ export class ManagerService {
 
     // update cell
     public updateCell(req: UpdateCellRequest): boolean {
+        const sheetDetail = this.database.getSheetDetailById(req.getSheetID());
+        const operator = req.getOperator();
+        if (operator === "C") {
+        } else if (operator === "AC") {
+        }
         return true;
     }
     
