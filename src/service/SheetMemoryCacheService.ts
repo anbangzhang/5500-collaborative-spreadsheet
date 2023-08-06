@@ -13,6 +13,10 @@ export class SheetMemoryCacheService {
     public setSheetMemory(sheetId: string, sheetMemory: SheetMemory): void {
         this.sheetMemoryMap.set(sheetId, sheetMemory);
     }
+
+    public deleteSheetMemory(sheetId: string): void {
+        this.sheetMemoryMap.delete(sheetId);
+    }
     
 }
 
