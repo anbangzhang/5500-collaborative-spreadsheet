@@ -16,6 +16,7 @@ import SheetDB from '../db/SheetDB';
 import SheetDetail from '../db/SheetDetail';
 import SheetMemory from '../engine/SheetMemory';
 import CalculationManager from '../engine/CalculationManager';
+import FormulaBuilder from '../engine/FormulaBuilder';
 
 // ManagerService
 export class ManagerService {
@@ -110,6 +111,7 @@ export class ManagerService {
                 throw new Error("User does not own sheet");
             }
             this.database.deleteSheetById(req.getSheetID());
+            this.sheetMemoryCacheService.deleteSheetMemory(req.getSheetID());
 
         } catch (err) {
             if (err instanceof Error) {
@@ -136,8 +138,24 @@ export class ManagerService {
     public updateCell(req: UpdateCellRequest): boolean {
         const sheetDetail = this.database.getSheetDetailById(req.getSheetID());
         const operator = req.getOperator();
+        let currentFormula = sheetDetail.getFormula(req.getCellLabel());
+        let formulaBuilder = new FormulaBuilder();
+        formulaBuilder.setFormula(currentFormula);
         if (operator === "C") {
+            formulaBuilder.removeToken();
         } else if (operator === "AC") {
+            formulaBuilder.setFormula([]);
+        } else {
+            formulaBuilder.addToken(operator);
+        }
+        sheetDetail.setFormula(req.getCellLabel(), formulaBuilder.getFormula());
+        this.database.updateSheetDetailById(sheetDetail);
+
+        // if the sheet is cached in the sheetMemoryCacheService, update the sheetMemory in cache
+        let sheetMemory = this.sheetMemoryCacheService.getSheetMemory(req.getSheetID());
+        if (sheetMemory) {
+            sheetMemory = this.convertSheetDetailToSheetMemory(sheetDetail);
+            this.sheetMemoryCacheService.setSheetMemory(req.getSheetID(), sheetMemory);
         }
         return true;
     }
