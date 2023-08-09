@@ -9,15 +9,16 @@ const baseURL = `http://${hostname}:${port}`;
 
 interface ControlPanelProps {
     resetURL: (sheetID: string) => void;
+    userName: string;
 }
 
 interface Sheet {
-    id: string;
     name: string;
     owner: string;
+    id: string;
   }
 
-export function ControlPanel( {resetURL}: ControlPanelProps) {
+export function ControlPanel( {resetURL, userName}: ControlPanelProps) {
 
     const [sheets, setSheets] = useState<Sheet[]>([]);
     const [newSheetName, setNewSheetName] = useState<string>('');
@@ -38,7 +39,6 @@ export function ControlPanel( {resetURL}: ControlPanelProps) {
             })
             .then((json) => {
                 console.log(`json: ${JSON.stringify(json)}`);
-
                 setSheets(json);
             })
             .catch((error) => {
@@ -73,8 +73,9 @@ export function ControlPanel( {resetURL}: ControlPanelProps) {
                                 if (newSheetName === '') {
                                     alert("Please enter a name for the new sheet!");
                                     return;
+                                } else {
+                                    createSheet(newSheetName, userName);
                                 }
-                                //resetURL(newSheetName);
                             }}>
                                 Create new sheet
                             </button>
@@ -104,12 +105,14 @@ export function ControlPanel( {resetURL}: ControlPanelProps) {
                     defaultValue={sheet.name}
                     readOnly={true}
                     />
+                    {getEditSheet(sheet)}
+                    {getDeleteSheet(sheet, userName)}
                     </li>
             })}            
         </ul>
     }
 
-    function getEditSheet(sheet: { id: string; name: string; owner: string; }) {
+    function getEditSheet(sheet: Sheet) {
         return <button onClick={() =>
             resetURL(sheet.id)}>
             Edit
@@ -119,14 +122,15 @@ export function ControlPanel( {resetURL}: ControlPanelProps) {
     function deleteSheet(sheet_id: string, user_name: string) {
         const path = `/deleteSheet`;
         const requestURL = baseURL + path;
+        let token = btoa(user_name);
         const options = {
-            method: 'DELETE',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'token': user_name//TODO: get token from local storage
+                'token': token
             },
             body: JSON.stringify({
-                sheet_id: sheet_id
+                "sheet_id": sheet_id
             })
         }
         fetch(requestURL, options)
@@ -136,17 +140,60 @@ export function ControlPanel( {resetURL}: ControlPanelProps) {
             })
             .then((json) => {
                 console.log(`json: ${json}`);
+                if (json.success) {
+                    let newSheets = sheets.filter((sheet) => {
+                        return sheet.id !== sheet_id;
+                    })
+                    setSheets(newSheets);
+                } else {
+                    let error = json.errorMessage;
+                    alert(error);
+                }
             })
-            .catch((error) => {
-                console.log(`deleteSheet error: ${error}`);
-            });
     }
 
-    function getDeleteSheet(sheet: { id: string; name: string; owner: string; }) {
+    function getDeleteSheet(sheet: Sheet, user_name: string) {
         return <button onClick={() => 
-            deleteSheet(sheet.id, sheet.owner)}>
+            deleteSheet(sheet.id, user_name)}>
             Delete
         </button>
+    }
+
+    function createSheet(sheet_name: string, user_name: string) {
+        const path = `/createSheet`;
+        const requestURL = baseURL + path;
+        let token = btoa(user_name);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify({
+                "name": sheet_name
+            })
+        }
+        fetch(requestURL, options)
+            .then((response) => {
+                console.log(`response: ${response}`);
+                return response.json();
+            })
+            .then((json) => {
+                console.log(`json: ${json}`);
+                let newSheetID = json.id;
+                let createSuccess = json.success;
+                if (!createSuccess) {
+                    let error = json.errorMessage;
+                    alert(error);
+                    return;
+                }
+                let newSheet = {
+                    name: sheet_name,
+                    owner: user_name,
+                    id: newSheetID
+                }
+                setSheets([...sheets, newSheet]);
+            })
     }
 
     return <div>

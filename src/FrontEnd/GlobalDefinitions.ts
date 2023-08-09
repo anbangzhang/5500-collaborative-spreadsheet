@@ -13,7 +13,8 @@ export const ButtonNames = {
     sin: "#k",
     cos: "#l",
     tan: "#w",
-    inversesin: "#e",
-    inversecos: "#r",
-    inversetan: "#t"
+    sinInverse: "#e",
+    cosInverse: "#r",
+    tanInverse: "#t",
+    reverse: "reverse"
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, useLocation } from 'react-router-dom';
-import { ControlPanel } from './FrontEnd/ControlPanel';
+import { ControlPanel } from './frontend/ControlPanel';
 
 function App() {
   // a user name to be used in the request task function
@@ -69,9 +69,7 @@ function App() {
   }
 
   function getControlPanel() {
-    return <ControlPanel resetURL={resetURL} />
-      
-
+    return <ControlPanel resetURL={resetURL} userName={userName}/>
   }
 
   function getSheetDisplay() {
