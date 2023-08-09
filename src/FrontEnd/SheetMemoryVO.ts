@@ -19,6 +19,11 @@ export class SheetMemoryVO {
             }
         }
     }
+
+    public getCellByLabel(label: string): CellVO {
+        let [column, row] = Cell.cellToColumnRow(label);
+        return this._cells[column][row];
+    }
 }
 
 export default SheetMemoryVO;

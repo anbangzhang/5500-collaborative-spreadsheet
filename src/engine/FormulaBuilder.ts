@@ -12,7 +12,7 @@
  * It provides a method to get the display string 
  * 
  */
-import Cell from "./Cell";
+import Cell from "../Cell";
 
 export class FormulaBuilder {
 
@@ -56,14 +56,32 @@ export class FormulaBuilder {
   addToken(token: TokenType): void {
     let lastTokenUpdated = false;
     let ignoringToken = false;
-    // if there is no formula then add the token to the formula
-    if (this.formula.length === 0) {
+    // if there is no formula and the token is not a scientific operator then add the token to the formula
+    if (this.formula.length === 0 && token[0] !== "#") {
       this.formula = [...this.formula, token];
+      return;
+    }
+
+    // if there is no formula and the token is a scientific operator then do not add the token to the formula
+    if (this.formula.length === 0 && token[0] === "#") {
       return;
     }
 
     // get the last token of the formula
     let lastToken = this.formula[this.formula.length - 1];
+
+    // if the current token is a scientific operator...
+    if (token[0] === "#") {
+      // if the last token is a ) then add the token to the formula
+      if (lastToken === ")") {
+        this.formula = [...this.formula, token];
+        return;
+      }
+      // if the last token is an operator then do not add the token to the formula
+      if (lastToken[0] !== "#" && isNaN(Number(lastToken))) {
+      ignoringToken = true;
+      }
+    }
 
     // if the last token is a number and the input token is a number then append the input token to the last token
     if (!isNaN(Number(lastToken)) && !isNaN(Number(token))) {

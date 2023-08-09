@@ -1,6 +1,7 @@
 import Cell from "./Cell"
 import SheetMemory from "./SheetMemory"
 import { ErrorMessages } from "./GlobalDefinitions";
+import SheetMemoryVO from "../frontend/SheetMemoryVO";
 
 
 
@@ -10,11 +11,11 @@ export class FormulaEvaluator {
   private _errorMessage: string = "";
   private _currentFormula: FormulaType = [];
   private _lastResult: number = 0;
-  private _sheetMemory: SheetMemory;
+  private _sheetMemory: SheetMemory | SheetMemoryVO;
   private _result: number = 0;
 
 
-  constructor(memory: SheetMemory) {
+  constructor(memory: SheetMemory | SheetMemoryVO) {
     this._sheetMemory = memory;
   }
 
