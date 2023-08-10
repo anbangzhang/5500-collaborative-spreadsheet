@@ -1,5 +1,3 @@
-import Cell from "../engine/Cell";
-
 export class CellVO {
     // private members
 

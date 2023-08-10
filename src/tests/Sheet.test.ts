@@ -14,6 +14,18 @@ describe('Sheet', () => {
         sheet = new Sheet(sheetName, 'Anonymous', '1');
     });
 
+    afterAll(() => {
+        // delete all the files that start with test-sheet
+        const directory = path.join(__dirname, '../db/data');
+        const files = fs.readdirSync(directory);
+        for (const file of files) {
+        // check if it is a test file
+            if (file.startsWith('test-sheet')) {
+                fs.unlinkSync(path.join(directory, file));
+            }
+        }
+    });
+
     describe('constructor', () => {
         let id: number = 1;
         it('should create a new sheet instance', () => {
