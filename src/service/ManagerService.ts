@@ -17,6 +17,8 @@ import SheetDetail from '../db/SheetDetail';
 import SheetMemory from '../engine/SheetMemory';
 import CalculationManager from '../engine/CalculationManager';
 import FormulaBuilder from '../engine/FormulaBuilder';
+import ReferenceCheckReqeust from './request/ReferenceCheckRequest';
+import ReferenceCheckResponse from './response/ReferenceCheckResponse';
 
 // ManagerService
 export class ManagerService {
@@ -132,6 +134,13 @@ export class ManagerService {
     // release cell
     public releaseCell(req: LockCellRequest): boolean {
         return this.cellLockService.unlockCell(req.getSheetID(), req.getCellLabel(), req.getUser());
+    }
+
+    public referenceCheck(req: ReferenceCheckReqeust): ReferenceCheckResponse {
+        let sheetDetail = this.database.getSheetDetailById(req.getSheetID());
+        let sheetMemory = this.convertSheetDetailToSheetMemory(sheetDetail);
+        let result = this.calculationManager.okToAddNewDependency(req.getCurrentCell(), req.getReferencedCell(), sheetMemory);
+        return new ReferenceCheckResponse(result);
     }
 
     // update cell

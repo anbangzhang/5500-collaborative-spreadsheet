@@ -21,6 +21,7 @@ import CreateSheetRequest from './service/request/CreateSheetRequest';
 import DeleteSheetRequest from './service/request/DeleteSheetRequest';
 import LockCellRequest from './service/request/LockCellRequest';
 import UpdateCellRequest from './service/request/UpdateCellRequest';
+import ReferenceCheckRequest from './service/request/ReferenceCheckRequest';
 
 // define a debug flag to turn on debugging
 const debug = true;
@@ -119,6 +120,12 @@ app.post('/releaseCell', (req: express.Request, res: express.Response) => {
     } else {
         res.json({'success': success, 'errorMessage': 'Cell is not locked by you'});
     }
+});
+
+app.post('/referenceCheck', (req: express.Request, res: express.Response) => {
+    const request = new ReferenceCheckRequest(req.body.sheet_id, req.body.current_cell, req.body.referenced_cell);
+    const success = managerService.referenceCheck(request);
+    res.json(success);
 });
 
 app.post('/updateCell', (req: express.Request, res: express.Response) => {
