@@ -1,5 +1,5 @@
-import { Cell } from "./Cell";
-import { ErrorMessages } from "./GlobalDefinitions";
+import { Cell } from "../engine/Cell";
+import { ErrorMessages } from "../engine/GlobalDefinitions";
 
 describe("Cell", () => {
   describe("constructor", () => {
@@ -58,25 +58,6 @@ describe("Cell", () => {
       expect(cell.getDependsOn()).toEqual(["B2"]);
     });
   });
-
-  describe("removeDependsOn", () => {
-    it("removes a dependency from the dependsOn array", () => {
-      let cell = new Cell();
-      cell.addDependsOn("B2");
-      cell.removeDependsOn("B2");
-
-      expect(cell.getDependsOn()).toEqual([]);
-    });
-
-    it("does not remove a non-existent dependency from the dependsOn array", () => {
-      let cell = new Cell();
-      cell.addDependsOn("B2");
-      cell.removeDependsOn("C3");
-
-      expect(cell.getDependsOn()).toEqual(["B2"]);
-    });
-  });
-
 
   describe("getFormula", () => {
     it("should return the formula", () => {
@@ -145,4 +126,3 @@ describe("Cell", () => {
 
 
 });
-

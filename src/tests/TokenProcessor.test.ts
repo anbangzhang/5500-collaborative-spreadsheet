@@ -1,4 +1,4 @@
-import FormulaBuilder from "./engine/FormulaBuilder";
+import FormulaBuilder from "../engine/FormulaBuilder";
 
 describe("TokenProcessor", () => {
   describe("getFormulaString", () => {

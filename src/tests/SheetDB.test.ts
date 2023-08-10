@@ -13,7 +13,7 @@ describe('SheetDB', () => {
     afterAll(() => {
         const fs = require('fs');
         const path = require('path');
-        const directory = path.join(__dirname, 'db/data');
+        const directory = path.join(__dirname, '../db/data');
         const files = fs.readdirSync(directory);
 
         for (const file of files) {

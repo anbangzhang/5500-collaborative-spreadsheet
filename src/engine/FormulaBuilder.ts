@@ -12,7 +12,7 @@
  * It provides a method to get the display string 
  * 
  */
-import Cell from "../Cell";
+import Cell from "./Cell";
 
 export class FormulaBuilder {
 
