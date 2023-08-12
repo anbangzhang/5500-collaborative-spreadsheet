@@ -30,16 +30,32 @@ export class CellVO {
         return this._formula;
     }
 
+    setFormula(formula: string[]): void {
+        this._formula = formula;
+    }
+
     getValue(): number {
         return this._value;
+    }
+
+    setValue(value: number): void {
+        this._value = value;
     }
 
     getError(): string {
         return this._error;
     }
 
+    setError(error: string): void {
+        this._error = error;
+    }
+
     getDisplayString(): string {
         return this._displayString;
+    }
+
+    setDisplayString(displayString: string): void {
+        this._displayString = displayString;
     }
 
     getLabel(): string {

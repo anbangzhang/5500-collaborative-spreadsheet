@@ -2,13 +2,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { PortsGlobal } from "../PortsGlobal";
 
+
 const port = PortsGlobal.serverPort;
 
 const hostname = window.location.hostname;
 const baseURL = `http://${hostname}:${port}`;
 
 interface ControlPanelProps {
-    resetURL: (sheetID: string) => void;
     userName: string;
 }
 
@@ -16,10 +16,9 @@ interface Sheet {
     name: string;
     owner: string;
     id: string;
-  }
+}
 
-export function ControlPanel( {resetURL, userName}: ControlPanelProps) {
-
+export function ControlPanel( {userName}: ControlPanelProps) {
     const [sheets, setSheets] = useState<Sheet[]>([]);
     const [newSheetName, setNewSheetName] = useState<string>('');
     const [showSheetList, setShowSheetList] = useState<boolean>(false);
@@ -105,18 +104,23 @@ export function ControlPanel( {resetURL, userName}: ControlPanelProps) {
                     defaultValue={sheet.name}
                     readOnly={true}
                     />
-                    {getEditSheet(sheet)}
-                    {getDeleteSheet(sheet, userName)}
+                        {getEditSheet(sheet)}
+                        {getDeleteSheet(sheet, userName)}
                     </li>
             })}            
         </ul>
     }
 
     function getEditSheet(sheet: Sheet) {
-        return <button onClick={() =>
-            resetURL(sheet.id)}>
-            Edit
-        </button>
+        const jumpTo = () => {
+            const w = window.open(`/${sheet.id}`);
+            if (w) {
+                w.focus();
+            } else {
+                alert('Please allow popups for this website');
+            }
+        }
+        return <button onClick={() => {jumpTo()}}>Edit</button>
     }
 
     function deleteSheet(sheet_id: string, user_name: string) {
@@ -196,11 +200,13 @@ export function ControlPanel( {resetURL, userName}: ControlPanelProps) {
             })
     }
 
-    return <div>
-        <h2>Control Panel</h2>
-        {getControlButtons()}
-        {showSheetList && getSheetsDisplay()}
-    </div>
+    return (
+        <div>
+            <h2>Control Panel</h2>
+            {getControlButtons()}
+            {showSheetList && getSheetsDisplay()}
+        </div>
+    );
 
 }
 

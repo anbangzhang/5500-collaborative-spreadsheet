@@ -1,8 +1,6 @@
 import SheetMemoryVO from "./SheetMemoryVO";
-import FormulaEvaluator from "../engine/FormulaEvaluator";
-import CalculationManager from "../engine/CalculationManager";
-import FormulaBuilder from "../engine/FormulaBuilder";
-import CellVO from "../service/model/CellVO";
+import Cell from "../engine/Cell";
+import CellVO from "./CellVO";
 
 /**
  * The main controller of the SpreadSheet
@@ -23,8 +21,6 @@ import CellVO from "../service/model/CellVO";
  * setEditStatus(bool:boolean): void
  * getEditStatusString(): string
  * 
- * 
- *
  */
 
 export class SheetController {
@@ -32,34 +28,15 @@ export class SheetController {
     private _currentWorkingRow = 0;
     private _currentWorkingColumn = 0;
 
-  /**
-   * The components that the SpreadSheetEngine uses to manage the sheet
-   * 
-   */
-
-  // The formula evaluator, this is used to evaluate the formula for the current cell
-  // it is only called for a cell when all cells it depends on have been evaluated
-  private _formulaEvaluator: FormulaEvaluator;
-
-  // The formula builder, this is used to build the formula for the current cell
-  // it is used when the user is editing the formula for the current cell
-  private _formulaBuilder: FormulaBuilder;
-
   // The current cell is being edited
   private _cellIsBeingEdited: boolean;
 
-  // The dependency manager, this is used to manage the dependencies between cells
-  // The main job of this is to compute the order in which the cells should be evaluated
-  private _calculationManager: CalculationManager;
 
     /**
    * constructor
    */
-    constructor(columns: number, rows: number) {
-        this._memory = new SheetMemoryVO(columns, rows);
-        this._formulaEvaluator = new FormulaEvaluator(this._memory);
-        this._calculationManager = new CalculationManager();
-        this._formulaBuilder = new FormulaBuilder();
+    constructor(sheetmemory: SheetMemoryVO) {
+        this._memory = sheetmemory
         this._cellIsBeingEdited = false;
     }
 
@@ -73,13 +50,7 @@ export class SheetController {
    * 
    */
     addToken(token: string): void {
-        // add the token to the formula
-        this._formulaBuilder.addToken(token);
-        // update the memory with the new formula
-        let formula = this._formulaBuilder.getFormula();
-        this._memory.setCellFormulaByColumnRow(this._currentWorkingColumn, this._currentWorkingRow, formula);
-    
-        this._calculationManager.evaluateSheet(this._memory);
+
     }
 
     /**  
@@ -99,18 +70,14 @@ export class SheetController {
         // do nothing
         return;
         }
-        let currentCell: Cell = this._memory.getCellByColumnRow(this._currentWorkingColumn, this._currentWorkingRow);
+        let currentCell: CellVO = this._memory.getCellByColumnRow(this._currentWorkingColumn, this._currentWorkingRow);
         let currentLabel = currentCell.getLabel();
         
         // Check to see if we would be introducing a circular dependency
         // this function will update the dependency for the cell being inserted
-        let okToAdd = this._calculationManager.okToAddNewDependency(currentLabel, cellReference, this._memory);
 
         // We have checked to see if this new token introduces a circular dependency
         // if it does not then we can add the token to the formula
-        if (okToAdd) {
-        this.addToken(cellReference);
-        }
     }
 
     /**
@@ -119,10 +86,7 @@ export class SheetController {
    * 
    */
     removeToken(): void {
-        this._formulaBuilder.removeToken();
-        let formula = this._formulaBuilder.getFormula();
-        this._memory.setCellFormulaByColumnRow(this._currentWorkingColumn, this._currentWorkingRow, formula);
-        this._calculationManager.evaluateSheet(this._memory);
+
     }
 
     /**
@@ -131,10 +95,6 @@ export class SheetController {
    * 
    */
   clearFormula(): void {
-        this._formulaBuilder.setFormula([]);
-        let formula = this._formulaBuilder.getFormula();
-        this._memory.setCellFormulaByColumnRow(this._currentWorkingColumn, this._currentWorkingRow, formula);
-        this._calculationManager.evaluateSheet(this._memory);
     }
 
     /**
@@ -144,7 +104,13 @@ export class SheetController {
    * 
    * */
   getFormulaString(): string {
-        return this._formulaBuilder.getFormulaString();
+        let currentWorkingCell = this._memory.getCellByColumnRow(this._currentWorkingColumn, this._currentWorkingRow);
+        let formula = currentWorkingCell.getFormula();
+        let formulaString = "";
+        for (let token of formula) {
+            formulaString += token;
+        }
+        return formulaString;
     }
 
     /** 
@@ -196,21 +162,6 @@ export class SheetController {
    * */
   setWorkingCellByCoordinates(column: number, row: number): void {
         // if the cell is the same as the current cell do nothing
-        if (column === this._currentWorkingColumn && row === this._currentWorkingRow) return;
-
-        // get the current formula from the formula builder
-        let currentFormula = this._formulaBuilder.getFormula();
-        this._memory.setCellFormulaByColumnRow(this._currentWorkingColumn, this._currentWorkingRow, currentFormula);
-
-        // get the formula from the new cell
-        this._memory.setWorkingCellByCoordinates(column, row);
-        currentFormula = this._memory.getCurrentCellFormula();
-        this._formulaBuilder.setFormula(currentFormula);
-
-        this._currentWorkingColumn = column;
-        this._currentWorkingRow = row;
-
-        this._memory.setWorkingCellByCoordinates(column, row);
 
     }
 
@@ -221,8 +172,6 @@ export class SheetController {
     * @returns string[][]
     */
   public getSheetDisplayStringsForGUI(): string[][] {
-        this._calculationManager.updateComputationOrder(this._memory);
-        this._calculationManager.evaluateSheet(this._memory);
 
         let memoryDisplayValues = this._memory.getSheetDisplayStrings();
         let guiDisplayValues: string[][] = [];
@@ -230,10 +179,10 @@ export class SheetController {
         let inputColumns = memoryDisplayValues[0].length;
 
         for (let outputRow = 0; outputRow < inputColumns; outputRow++) {
-        guiDisplayValues[outputRow] = [];
-        for (let outputColumn = 0; outputColumn < inputRows; outputColumn++) {
-            guiDisplayValues[outputRow][outputColumn] = memoryDisplayValues[outputColumn][outputRow];
-        }
+            guiDisplayValues[outputRow] = [];
+            for (let outputColumn = 0; outputColumn < inputRows; outputColumn++) {
+                guiDisplayValues[outputRow][outputColumn] = memoryDisplayValues[outputColumn][outputRow];
+            }
         }
 
         return guiDisplayValues;

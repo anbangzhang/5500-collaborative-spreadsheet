@@ -2,7 +2,7 @@ import React from "react";
 import Button from "./Button";
 import { ButtonNames } from "../GlobalDefinitions";
 
-import "./KeyPad.css";
+import "./Keypad.css";
 import "./Button.css";
 
 interface KeyPadProps {
@@ -55,9 +55,9 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
             dataTestId="fraction-button"
         />
         <Button
-            text="AC/C"
+            text="AC"
             isDigit={false}
-            onClick={() => onCommandButtonClick(ButtonNames.allClear)} //TODO: add function
+            onClick={() => onCommandButtonClick(ButtonNames.allClear)}
             className="button-operator"
             dataTestId="cube-button"
         />
@@ -114,9 +114,9 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
           dataTestId="rand-button"
         />
         <Button
-          text="("
+          text="C"
           isDigit={false}
-          onClick={onButtonClick}
+          onClick={() => onCommandButtonClick(ButtonNames.clear)}
           className="button-number"
           dataTestId="left-parenthesis-button"
         />
@@ -174,7 +174,7 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
           dataTestId="tan-button"
         />
       <Button
-          text=")"
+          text="("
           isDigit={false}
           onClick={onButtonClick}
           className="button-number"
@@ -235,9 +235,9 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
           dataTestId="invtan-button"
         />
       <Button
-          text="+/-"
+          text=")"
           isDigit={false}
-          onClick={() => onCommandButtonClick(ButtonNames.reverse)}
+          onClick={onButtonClick}
           className="button-operator"
           dataTestId="reverse-button"
         />
