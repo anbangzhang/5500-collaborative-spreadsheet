@@ -25,7 +25,7 @@ type TokenType = string;
  * A structure for a formula
  * A formula is a list of tokens
  */
-type FormulaType = Token[];
+type FormulaType = TokenType[];
 
 
 
