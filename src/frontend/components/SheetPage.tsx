@@ -7,18 +7,16 @@ function SheetPage(props: any) {
     const [loading, setLoading] = useState(false);
     const [sheet, setSheet] = useState<SheetMemoryVO | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const currentURL = window.location.href;
-    let user = '';
-    // check if the url contains a user name
+    let currentURL = window.location.href;
+    let user = 'Anonymous';
+
     if (currentURL.includes('?')) {
         const urlSegments = currentURL.split('?');
         const idSegments = urlSegments[0].split('/');
         var id = idSegments[idSegments.length - 1];
         // check if the user name is empty
         const userSegments = urlSegments[1].split('=');
-        if (userSegments.length === 1) {
-            user = 'Anonymous';
-        } else {
+        if (userSegments.length === 2) {
             user = userSegments[1];
         }
     } else {
@@ -28,6 +26,8 @@ function SheetPage(props: any) {
 
     useEffect(() => {
         setLoading(true);
+        // check if the url contains a user name
+        
         sheetClient.getSheet(id!)
             .then((sheet: SetStateAction<SheetMemoryVO | null>) => {
                 setSheet(sheet);

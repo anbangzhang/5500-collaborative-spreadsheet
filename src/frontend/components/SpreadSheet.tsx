@@ -23,6 +23,7 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
   const [currentCell, setCurrentCell] = useState(spreadSheetController.getWorkingCellLabel());
   const [currentlyEditing, setCurrentlyEditing] = useState(spreadSheetController.getEditStatus());
 
+
   function updateDisplayValues(): void {
 
     setFormulaString(spreadSheetController.getFormulaString());
