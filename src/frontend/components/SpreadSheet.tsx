@@ -117,10 +117,14 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
 
     if (currentlyEditing) {
       // clicking number or operator buttons when editing will call updateCell api
-      let updateCellSuccess = sheetClient.updateCell(sheetMemory.id, currentCell, text!, currentUser);
-      if (updateCellSuccess) {
-        // update the formula string
-      }
+      sheetClient.updateCell(sheetMemory.id, currentCell, text!, currentUser)
+        .then((updateResult) => {
+          if (!updateResult) {
+            alert("Cannot update cell.");
+            return;
+          }
+          return;
+        })
     }
 
       let trueText = text ? text : "";
@@ -148,11 +152,24 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
       // if the edit status is true then add the token to the machine
       if (editStatus) {
         // first check circular dependency
-        let okToAdd = sheetClient.referenceCheck(sheetMemory.id, currentCell, realCellLabel);
-        if (okToAdd) {
-          let addTokenSuccess = sheetClient.updateCell(sheetMemory.id, currentCell, realCellLabel, currentUser);
-        }
-        updateDisplayValues();
+        sheetClient.referenceCheck(sheetMemory.id, currentCell, realCellLabel)
+          .then((okToAdd) => {
+            if (okToAdd[0]) {
+              sheetClient.updateCell(sheetMemory.id, currentCell, realCellLabel, currentUser)
+                .then((updateResult) => {
+                  if (!updateResult) {
+                    alert("Cannot update cell.");
+                    return;
+                  }
+                  return;
+                })
+            } else {
+              alert(okToAdd[1]);
+              return;
+            }
+            updateDisplayValues();
+          })
+
       }
       // if the edit status is false then set the current cell to the clicked on cell
       else {
