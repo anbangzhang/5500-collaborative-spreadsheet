@@ -26,7 +26,7 @@ const sheetClient = {
                 return convertToSheetMemoryVO(json);
             });
     },
-    async lockCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
+    lockCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
         const path = `/lockCell`;
         const requestURL = baseURL + path;
         let token = btoa(user);
@@ -42,24 +42,19 @@ const sheetClient = {
                 "user": user
             })
         }
-        try {
-            const response = await fetch(requestURL, options);
-            if (!response.ok) {
-                console.log(`Network response was not ok. Status: ${response.status}`);
-            }
-            const json = await response.json();
-            console.log('json:', json);  
-            if (json.success) {
-                return [true, ''];
-            } else {
-                return [false, json.errorMessage];
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            return [false, 'Failed to lock cell.'];
-        }
+        return fetch(requestURL, options)
+            .then((response) => {
+                return response.json();
+            })
+            .then((json) => {
+                if (json.success) {
+                    return [true, ''];
+                } else {
+                    return [false, json.errorMessage];
+                }
+        });
     },
-    async releaseCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
+    releaseCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
         const path = `/lockCell`;
         const requestURL = baseURL + path;
         let token = btoa(user);
@@ -75,24 +70,46 @@ const sheetClient = {
                 "user": user
             })
         }
-        try {
-            const response = await fetch(requestURL, options);
-            if (!response.ok) {
-                console.log(`Network response was not ok. Status: ${response.status}`);
-            }
-            const json = await response.json();
-            console.log('json:', json);  
+        return fetch(requestURL, options)
+        .then((response) => {
+            return response.json();
+        })
+        .then((json) => {
             if (json.success) {
                 return [true, ''];
             } else {
                 return [false, json.errorMessage];
             }
-        } catch (error) {
-            console.error('Error:', error);
-            return [false, 'Failed to release cell.'];
-        }
+        });
     },
-
+    referenceCheck(sheet_id: string, current_cell: string, user: string): Promise<[boolean, string]> {
+        const path = `/referenceCheck`;
+        const requestURL = baseURL + path;
+        let token = btoa(user);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify({
+                "sheet_id": sheet_id,
+                "current_cell": current_cell,
+                "user": user
+            })
+        }
+        return fetch(requestURL, options)
+        .then((response) => {
+            return response.json();
+        })
+        .then((json) => {
+            if (json.success) {
+                return [true, ''];
+            } else {
+                return [false, json.errorMessage];
+            }
+        });
+    }
 
 }
 

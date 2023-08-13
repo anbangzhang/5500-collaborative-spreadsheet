@@ -35,7 +35,8 @@ function SheetPage(props: any) {
         setLoading(true);
         // check if the url contains a user name
         
-        sheetClient.getSheet(id!)
+        const interval = setInterval(() => {
+            sheetClient.getSheet(id!)
             .then((sheet: SetStateAction<SheetMemoryVO | null>) => {
                 setSheet(sheet);
                 setLoading(false);
@@ -43,7 +44,9 @@ function SheetPage(props: any) {
             .catch((error: SetStateAction<string | null>) => {
                 setError(error);
                 setLoading(false);
-            })
+            });
+        }, 333);
+        return () => clearInterval(interval);
     }, [id]);
 
     return (

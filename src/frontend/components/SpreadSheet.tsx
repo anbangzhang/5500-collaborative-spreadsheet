@@ -34,7 +34,7 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
     setCurrentlyEditing(spreadSheetController.getEditStatus());
   }
 
-  async function onCommandButtonClick(command: string): Promise<void> {
+  function onCommandButtonClick(command: string): void {
     switch (command) {
       case ButtonNames.edit_toggle:
         if (!currentlyEditing) {
