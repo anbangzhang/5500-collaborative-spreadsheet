@@ -7,7 +7,7 @@
       "esnext"
     ],
     "types": [
-      "types",
+      "./types",
       "node",
       "jest"
     ],
