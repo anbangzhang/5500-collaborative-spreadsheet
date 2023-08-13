@@ -19,5 +19,8 @@ export const ButtonNames = {
   clear: "C",
 }
 
-
+export const DefaultValue = {
+  column: 5,
+  row: 4,
+}
 

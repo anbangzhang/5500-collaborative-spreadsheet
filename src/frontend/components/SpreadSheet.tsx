@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import Formula from "./Formula";
 import Status from "./Status";
 import KeyPad from "./Keypad";
@@ -7,15 +7,17 @@ import SheetHolder from "./SheetHolder";
 import { ButtonNames } from "../GlobalDefinitions";
 import SheetMemoryVO from "../SheetMemoryVO";
 import { sheetClient } from "../SheetClient";
+import { DefaultValue } from "../../engine/GlobalDefinitions";
 
 interface SpreadSheetProps {
   sheetMemory: SheetMemoryVO;
   currentUser: string;
 }
 
-export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
-  const spreadSheetController = new SheetController(sheetMemory, currentUser);
+let spreadSheetController: SheetController = new SheetController(DefaultValue.column, DefaultValue.row);
 
+export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
+  const [sheetMemoryVO, setSheetMemoryVO] = useState(sheetMemory);
   const [formulaString, setFormulaString] = useState(spreadSheetController.getFormulaString())
   const [resultString, setResultString] = useState(spreadSheetController.getResultString())
   const [cells, setCells] = useState(spreadSheetController.getSheetDisplayStringsForGUI());
@@ -23,6 +25,24 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
   const [currentCell, setCurrentCell] = useState(spreadSheetController.getWorkingCellLabel());
   const [currentlyEditing, setCurrentlyEditing] = useState(spreadSheetController.getEditStatus());
 
+  const id = sheetMemoryVO.id;
+
+  useEffect(() => {
+    // check if the url contains a user name
+        
+    const interval = setInterval(() => {
+      sheetClient.getSheet(id!)
+      .then((sheet: SetStateAction<SheetMemoryVO>) => {
+        setSheetMemoryVO(sheet);
+        // update sheet memory in controller
+        spreadSheetController.setSheetMemory(sheetMemoryVO);
+      })
+      .catch((error: SetStateAction<string | null>) => {
+        console.log(error);
+      });
+    }, 500);
+    return () => clearInterval(interval);
+  }, [id, sheetMemoryVO]);
 
   function updateDisplayValues(): void {
 
@@ -182,12 +202,12 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
 
   return (
     <div>
-      <Formula formulaString={formulaString} resultString={resultString}  ></Formula>
+      <Formula formulaString={formulaString} resultString={resultString}></Formula>
       <Status statusString={statusString}></Status>
       {<SheetHolder cellsValues={cells}
         onClick={onCellClick}
         currentCell={currentCell}
-        currentlyEditing={currentlyEditing} ></SheetHolder>}
+        currentlyEditing={currentlyEditing}></SheetHolder>}
       <KeyPad onButtonClick={onButtonClick}
         onCommandButtonClick={onCommandButtonClick}
         currentlyEditing={currentlyEditing}></KeyPad>

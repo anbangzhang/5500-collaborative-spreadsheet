@@ -1,8 +1,9 @@
 import { useState } from "react";
 import ControlPanel from "./ControlPanel";
+import { setCookie } from "./components/CookieUtil";
 
 function HomePage() {
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState('Anonymous');
 
 
   function getTitle() {
@@ -28,12 +29,17 @@ function HomePage() {
       <input
         type="text"
         placeholder="User name"
-        defaultValue={userName}
+        defaultValue={''}
         onChange={(event) => {
           // get the text from the input
           let userName = event.target.value;
           // set the user name
           setUserName(userName);
+          if (userName.length > 0) {
+            setCookie('user', userName, 1);
+          } else {
+            setCookie('user', 'Anonymous', 1);
+          }
         }} />
     </div>
   }

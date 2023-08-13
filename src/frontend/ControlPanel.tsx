@@ -113,7 +113,7 @@ export function ControlPanel( {userName}: ControlPanelProps) {
 
     function getEditSheet(sheet: Sheet) {
         const jumpTo = (userName: string) => {
-            const w = window.open(`/${sheet.id}?user=${userName}`);
+            const w = window.open(`/${sheet.id}`);
             if (w) {
                 w.focus();
             } else {

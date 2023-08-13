@@ -2,6 +2,7 @@ import { useState, useEffect, SetStateAction } from "react";
 import SheetMemoryVO from "../SheetMemoryVO";
 import { sheetClient } from "../SheetClient";
 import SpreadSheet from "./SpreadSheet";
+import { getCookie } from "./CookieUtil";
 
 function SheetPage(props: any) {
     const [loading, setLoading] = useState(false);
@@ -15,41 +16,44 @@ function SheetPage(props: any) {
             return 'Logged in as Anonymous';
         }
     }
-    let user = 'Anonymous';
 
-    if (currentURL.includes('?')) {
-        const urlSegments = currentURL.split('?');
-        const idSegments = urlSegments[0].split('/');
-        var id = idSegments[idSegments.length - 1];
-        // check if the user name is empty
-        const userSegments = urlSegments[1].split('=');
-        if (userSegments.length === 2 && userSegments[1].length > 0) {
-            user = userSegments[1];
-        } else {
-            user = 'Anonymous';
-        }
-    } else {
-        const urlSegments = currentURL.split('/');
-        id = urlSegments[urlSegments.length - 1];
-        user = 'Anonymous';
+    let user = 'Anonymous';
+    if (getCookie('user') !== null) {
+        user = getCookie('user')!;
     }
+
+    var id = currentURL.split('/')[currentURL.split('/').length - 1];
+
+    // useEffect(() => {
+    //     setLoading(true);
+    //     // check if the url contains a user name
+        
+    //     const interval = setInterval(() => {
+    //         sheetClient.getSheet(id!)
+    //         .then((sheet: SetStateAction<SheetMemoryVO | null>) => {
+    //             setSheet(sheet);
+    //             setLoading(false);
+    //         })
+    //         .catch((error: SetStateAction<string | null>) => {
+    //             setError(error);
+    //             setLoading(false);
+    //         });
+    //     }, 333);
+    //     return () => clearInterval(interval);
+    // }, [id]);
 
     useEffect(() => {
         setLoading(true);
         // check if the url contains a user name
-        
-        const interval = setInterval(() => {
-            sheetClient.getSheet(id!)
-            .then((sheet: SetStateAction<SheetMemoryVO | null>) => {
-                setSheet(sheet);
-                setLoading(false);
-            })
-            .catch((error: SetStateAction<string | null>) => {
-                setError(error);
-                setLoading(false);
-            });
-        }, 333);
-        return () => clearInterval(interval);
+        sheetClient.getSheet(id!)
+        .then((sheet: SetStateAction<SheetMemoryVO | null>) => {
+            setSheet(sheet);
+            setLoading(false);
+        })
+        .catch((error: SetStateAction<string | null>) => {
+            setError(error);
+            setLoading(false);
+        });
     }, [id]);
 
     return (
@@ -60,7 +64,6 @@ function SheetPage(props: any) {
                         <p>Loading...</p>
                 </div>
             )}
-
             <h1>{returnLoggedInUser(user)}</h1>
             <h1>{sheet?.name}</h1>
             <h2>Owner: {sheet?.owner}</h2>

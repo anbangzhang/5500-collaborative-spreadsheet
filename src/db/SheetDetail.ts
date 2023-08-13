@@ -1,4 +1,5 @@
 import Cell from '../engine/Cell';
+import { DefaultValue } from '../engine/GlobalDefinitions';
 
 export class SheetDetail {
     private _id: string;
@@ -11,9 +12,9 @@ export class SheetDetail {
             this._cells = cells;
         } else {
             this._cells = [];
-            for (let column = 0; column < 5; column++) {
+            for (let column = 0; column < DefaultValue.column; column++) {
                 this._cells[column] = [];
-                for (let row = 0; row < 4; row++) {
+                for (let row = 0; row < DefaultValue.row; row++) {
                     this._cells[column][row] = [];
                 }
             }

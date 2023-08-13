@@ -35,18 +35,15 @@ export class SheetController {
     /**
    * constructor
    */
-    constructor(sheetmemory: SheetMemoryVO, currentUser: string) {
-        this._memory = sheetmemory
+    constructor(columns: number, rows: number) {
+        this._memory = new SheetMemoryVO(columns, rows, '', '', '', new Map<string, string>());
+        this._currentWorkingColumn = 0;
+        this._currentWorkingRow = 0;
         this._cellIsBeingEdited = false;
-        for (let [label, user] of this._memory.getOccupiedCells()) {
-            if (user === currentUser) {
-                this._cellIsBeingEdited = true;
-                let [column, row] = Cell.cellToColumnRow(label);
-                this._currentWorkingColumn = column;
-                this._currentWorkingRow = row;
-                return;
-            }
-        }
+    }
+
+    setSheetMemory(sheetMemory: SheetMemoryVO): void {
+        this._memory = sheetMemory;
     }
 
     /**  
