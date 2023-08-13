@@ -92,9 +92,39 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
      function onButtonClick(event: React.MouseEvent<HTMLButtonElement>): void {
 
       const text = event.currentTarget.textContent;
+      if (text === '1' || text === '2' || text === '3' || text === '4' || text === '5' || text === '6' || text === '7' || text === '8' || text === '9' || text === '0' ) {
+        if (!currentlyEditing) {
+          // get the occupied cells from the sheet memory
+          // throws an error if the cell is occupied
+          let occupiedCells = sheetMemory.getOccupiedCells();
+          if (occupiedCells.get(currentCell) !== undefined && occupiedCells.get(currentCell) !== currentUser) {
+            alert("This cell is occupied by another user.");
+          }
+          // clicking number buttons when not editing will lock the cell
+          sheetClient.lockCell(sheetMemory.id, currentCell, currentUser)
+            .then((lockResult) => {
+              if (!lockResult[0]) {
+                alert(lockResult[1]);
+                return;
+              }
+            })
+          setCurrentlyEditing(true);
+          spreadSheetController.setEditStatus(true);
+          setStatusString(spreadSheetController.getEditStatusString());
+          sheetMemory.setNewOccupiedCell(currentCell, currentUser);
+        }
+      }
+
+    if (currentlyEditing) {
+      // clicking number or operator buttons when editing will call updateCell api
+      let updateCellSuccess = sheetClient.updateCell(sheetMemory.id, currentCell, text!, currentUser);
+      if (updateCellSuccess) {
+        // update the formula string
+      }
+    }
+
       let trueText = text ? text : "";
       spreadSheetController.setEditStatus(true);
-      spreadSheetController.addToken(trueText);
   
       updateDisplayValues();
   }
@@ -111,16 +141,17 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
       const cellLabel = event.currentTarget.getAttribute("cell-label");
       // calculate the current row and column of the clicked on cell
 
-
-
-
       const editStatus = spreadSheetController.getEditStatus();
       let realCellLabel = cellLabel ? cellLabel : "";
   
   
       // if the edit status is true then add the token to the machine
       if (editStatus) {
-        spreadSheetController.addCell(realCellLabel);  // this will never be ""
+        // first check circular dependency
+        let okToAdd = sheetClient.referenceCheck(sheetMemory.id, currentCell, realCellLabel);
+        if (okToAdd) {
+          let addTokenSuccess = sheetClient.updateCell(sheetMemory.id, currentCell, realCellLabel, currentUser);
+        }
         updateDisplayValues();
       }
       // if the edit status is false then set the current cell to the clicked on cell

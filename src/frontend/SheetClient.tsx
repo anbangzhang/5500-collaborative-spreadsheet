@@ -109,6 +109,32 @@ const sheetClient = {
                 return [false, json.errorMessage];
             }
         });
+    },
+    updateCell(sheet_id: string, cell_label: string, operator: string, user: string): Promise<boolean> {
+        const path = `/updateCell`;
+        const requestURL = baseURL + path;
+        let token = btoa(user);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify({
+                "sheet_id": sheet_id,
+                "cell_label": cell_label,
+                "operator": operator,
+                "user": user
+            })
+        }
+        return fetch(requestURL, options)
+        .then((response) => {
+            return response.json();
+        }
+        ).then((json) => {
+            return json.success;
+        });
+
     }
 
 }
