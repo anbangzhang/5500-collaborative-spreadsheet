@@ -23,12 +23,15 @@ function SheetPage(props: any) {
         var id = idSegments[idSegments.length - 1];
         // check if the user name is empty
         const userSegments = urlSegments[1].split('=');
-        if (userSegments.length === 2) {
+        if (userSegments.length === 2 && userSegments[1].length > 0) {
             user = userSegments[1];
+        } else {
+            user = 'Anonymous';
         }
     } else {
         const urlSegments = currentURL.split('/');
         id = urlSegments[urlSegments.length - 1];
+        user = 'Anonymous';
     }
 
     useEffect(() => {
