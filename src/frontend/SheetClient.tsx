@@ -102,7 +102,7 @@ function convertToSheetMemoryVO(json: any): SheetMemoryVO {
     let sheet_id = json.id;
     let sheet_column = json.cells.length;
     let sheet_row = json.cells[0].length;
-    let _occupied = json.occupiedCells;
+    let _occupied = json.occupied_cells;
     let sheet_occupied = new Map<string, string>();
     for (let [k, v] of Object.entries(_occupied)) {
         if (typeof v === 'string') {

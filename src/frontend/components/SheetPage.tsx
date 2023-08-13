@@ -8,7 +8,14 @@ function SheetPage(props: any) {
     const [sheet, setSheet] = useState<SheetMemoryVO | null>(null);
     const [error, setError] = useState<string | null>(null);
     let currentURL = window.location.href;
-    let user = 'Anonymous';
+    const returnLoggedInUser = (user: string) => {
+        if (user.length > 0) {
+            return 'Logged in as ' + user;
+        } else {
+            return 'Logged in as Anonymous';
+        }
+    }
+    let user = '';
 
     if (currentURL.includes('?')) {
         const urlSegments = currentURL.split('?');
@@ -48,7 +55,7 @@ function SheetPage(props: any) {
                 </div>
             )}
 
-            <h1>Logged in as {user}</h1>
+            <h1>{returnLoggedInUser(user)}</h1>
             <h1>{sheet?.name}</h1>
             <h2>Owner: {sheet?.owner}</h2>
             {sheet && <SpreadSheet sheetMemory={sheet} currentUser={user}/>}
