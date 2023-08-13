@@ -34,11 +34,11 @@ function SheetComponent({ cellsValues, onClick, currentCell, currentlyEditing, o
     if (cell === currentCell && currentlyEditing) {
       return "cell-editing";
     }
+    if (occupiedCells.includes(cell)) {
+      return "cell-locked";
+    }
     if (cell === currentCell) {
       return "cell-selected";
-    }
-    if (cell in occupiedCells) {
-      return "cell-locked";
     }
     return "cell";
   }
