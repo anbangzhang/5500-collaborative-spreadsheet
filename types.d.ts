@@ -1,3 +1,4 @@
+import { type } from "os";
 
 type ButtonElement = React.MouseEvent<HTMLButtonElement>;
 /**
@@ -27,7 +28,15 @@ type TokenType = string;
  */
 type FormulaType = TokenType[];
 
-
+/**
+ * A structure for a cell
+ * A cell has a formula and a value
+ */
+type CellType = {
+  formula: FormulaType;
+  value: number;
+  error: string;
+};
 
 interface SheetType {
   [key: string]: CellType;
