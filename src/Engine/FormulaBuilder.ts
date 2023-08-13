@@ -56,14 +56,9 @@ export class FormulaBuilder {
   addToken(token: TokenType): void {
     let lastTokenUpdated = false;
     let ignoringToken = false;
-    // if there is no formula and the token is not a scientific operator then add the token to the formula
-    if (this.formula.length === 0 && token[0] !== "#") {
+    // if there is no formula then add the token to the formula
+    if (this.formula.length === 0) {
       this.formula = [...this.formula, token];
-      return;
-    }
-
-    // if there is no formula and the token is a scientific operator then do not add the token to the formula
-    if (this.formula.length === 0 && token[0] === "#") {
       return;
     }
 
@@ -72,15 +67,15 @@ export class FormulaBuilder {
 
     // if the current token is a scientific operator...
     if (token[0] === "#") {
-      // if the last token is a ) then add the token to the formula
-      if (lastToken === ")") {
-        this.formula = [...this.formula, token];
-        return;
-      }
-      // if the last token is an operator then do not add the token to the formula
-      if (lastToken[0] !== "#" && isNaN(Number(lastToken))) {
+      // if the last token is a number then do not add the token to the formula
+      if (lastToken[0] !== "#" && !isNaN(Number(lastToken))) {
       ignoringToken = true;
       }
+    }
+
+    // if the current token is a non-scientific operator and the last token is a scientific operator then do not add the token to the formula
+    if (isNaN(Number(token)) && token[0] !== "#" && lastToken[0] === "#") {
+      ignoringToken = true;
     }
 
     // if the last token is a number and the input token is a number then append the input token to the last token
