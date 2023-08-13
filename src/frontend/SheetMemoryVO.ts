@@ -86,6 +86,10 @@ export class SheetMemoryVO {
     setNewOccupiedCell(occupiedCellLabel: string, user: string) {
         this._occupied.set(occupiedCellLabel, user);
     }
+
+    removeOccupiedCell(occupiedCellLabel: string) {
+        this._occupied.delete(occupiedCellLabel);
+    }
 }
 
 export default SheetMemoryVO;

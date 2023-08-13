@@ -30,6 +30,14 @@ export class CellVO {
         return this._formula;
     }
 
+    getFormulaString(): string {
+        let formulaString = "";
+        for (let token of this._formula) {
+            formulaString += token;
+        }
+        return formulaString;
+    }
+
     setFormula(formula: string[]): void {
         this._formula = formula;
     }

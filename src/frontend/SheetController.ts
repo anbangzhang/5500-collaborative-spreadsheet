@@ -46,18 +46,6 @@ export class SheetController {
         this._memory = sheetMemory;
     }
 
-    /**  
-   *  add token to current formula, this is not a cell and thus no dependency updating is needed
-   * 
-   * @param token:string
-   * 
-   * if the token is a valid cell label add it to the formula
-   * 
-   * 
-   */
-    addToken(token: string): void {
-
-    }
 
     /**  
    *  add cell reference to current formula
@@ -86,22 +74,7 @@ export class SheetController {
         // if it does not then we can add the token to the formula
     }
 
-    /**
-   * 
-   * remove the last token from the current formula
-   * 
-   */
-    removeToken(): void {
 
-    }
-
-    /**
-   * 
-   * clear the current formula
-   * 
-   */
-  clearFormula(): void {
-    }
 
     /**
    *  Get the formula as a string
