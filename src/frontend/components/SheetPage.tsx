@@ -15,7 +15,7 @@ function SheetPage(props: any) {
             return 'Logged in as Anonymous';
         }
     }
-    let user = '';
+    let user = 'Anonymous';
 
     if (currentURL.includes('?')) {
         const urlSegments = currentURL.split('?');

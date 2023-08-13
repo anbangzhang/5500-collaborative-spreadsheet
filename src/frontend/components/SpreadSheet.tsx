@@ -14,7 +14,7 @@ interface SpreadSheetProps {
 }
 
 export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
-  const spreadSheetController = new SheetController(sheetMemory);
+  const spreadSheetController = new SheetController(sheetMemory, currentUser);
 
   const [formulaString, setFormulaString] = useState(spreadSheetController.getFormulaString())
   const [resultString, setResultString] = useState(spreadSheetController.getResultString())
@@ -130,6 +130,7 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
       }
   
   }
+
 
   return (
     <div>
