@@ -139,7 +139,7 @@ app.post('/updateCell', (req: express.Request, res: express.Response) => {
 
     const request = new UpdateCellRequest(req.body.sheet_id, req.body.cell_label, req.body.operator, user);
     const success = managerService.updateCell(request);
-    res.json(success);
+    res.json({'success': success, 'errorMessage': ''});
 });
 
 // get the port we should be using
