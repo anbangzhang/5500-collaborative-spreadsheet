@@ -1,6 +1,6 @@
 import React from "react";
-import { StringLiteral } from "typescript";
 import Cell from "../../engine/Cell";
+import "./SheetComponent.css";
 
 // a component that will render a two dimensional array of cells
 // the cells will be rendered in a table

@@ -6,12 +6,14 @@ import SheetController from "../SheetController";
 import SheetHolder from "./SheetHolder";
 import { ButtonNames } from "../GlobalDefinitions";
 import SheetMemoryVO from "../SheetMemoryVO";
+import { sheetClient } from "../SheetClient";
 
 interface SpreadSheetProps {
   sheetMemory: SheetMemoryVO;
+  currentUser: string;
 }
 
-export function SpreadSheet({ sheetMemory }: SpreadSheetProps) {
+export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
   const spreadSheetController = new SheetController(sheetMemory);
 
   const [formulaString, setFormulaString] = useState(spreadSheetController.getFormulaString())
@@ -34,12 +36,39 @@ export function SpreadSheet({ sheetMemory }: SpreadSheetProps) {
   async function onCommandButtonClick(command: string): Promise<void> {
     switch (command) {
       case ButtonNames.edit_toggle:
-        if (currentlyEditing) {
-          spreadSheetController.setEditStatus(false);
-        } else {
+        if (!currentlyEditing) {
+          // get the occupied cells from the sheet memory
+          // throws an error if the cell is occupied
+          let occupiedCells = sheetMemory.getOccupiedCells();
+          if (occupiedCells.get(currentCell) !== undefined && occupiedCells.get(currentCell) !== currentUser) {
+            alert("This cell is occupied by another user.");
+          }
+          // clicking = when not editing will lock the cell
+          sheetClient.lockCell(sheetMemory.id, currentCell, currentUser)
+            .then((lockResult) => {
+              if (!lockResult[0]) {
+                alert(lockResult[1]);
+                return;
+              }
+            })
+          setCurrentlyEditing(true);
           spreadSheetController.setEditStatus(true);
+          setStatusString(spreadSheetController.getEditStatusString());
+          sheetMemory.setNewOccupiedCell(currentCell, currentUser);
+        } else {
+          // clicking = when editing will unlock the cell
+          sheetClient.releaseCell(sheetMemory.id, currentCell, currentUser)
+            .then((releaseResult) => {
+              if (!releaseResult[0]) {
+                alert(releaseResult[1]);
+                return;
+              }
+            })
+          setCurrentlyEditing(false);
+          spreadSheetController.setEditStatus(false);
+          setStatusString(spreadSheetController.getEditStatusString());
+
         }
-        setStatusString(spreadSheetController.getEditStatusString());
         break;
       case ButtonNames.clear:
         spreadSheetController.removeToken();
@@ -80,7 +109,10 @@ export function SpreadSheet({ sheetMemory }: SpreadSheetProps) {
      function onCellClick(event: React.MouseEvent<HTMLButtonElement>): void {
       const cellLabel = event.currentTarget.getAttribute("cell-label");
       // calculate the current row and column of the clicked on cell
-  
+
+
+
+
       const editStatus = spreadSheetController.getEditStatus();
       let realCellLabel = cellLabel ? cellLabel : "";
   

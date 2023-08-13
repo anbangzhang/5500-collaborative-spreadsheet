@@ -1,4 +1,5 @@
 import React from 'react';
+import './Formula.css';
 
 // FormulaComponentProps
 // we pass in value for the formula 

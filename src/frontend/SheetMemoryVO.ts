@@ -10,14 +10,16 @@ export class SheetMemoryVO {
     private _name: string;
     private _owner: string;
     private _id: string;
+    private _occupied: Map<string, string>
 
 
-    constructor(columns: number, rows: number, id: string, name: string, owner: string) {        
+    constructor(columns: number, rows: number, id: string, name: string, owner: string, occupied: Map<string, string>) {        
         this._numColumns = columns;
         this._numRows = rows;
         this._id = id;
         this._name = name;
         this._owner = owner;
+        this._occupied = occupied;
     
         this._cells = [];
         for (let column = 0; column < this._numColumns; column++) {
@@ -36,6 +38,10 @@ export class SheetMemoryVO {
         return this._owner;
     }
 
+    get id(): string {
+        return this._id;
+    }
+    
     getCellByLabel(label: string): CellVO {
         let [column, row] = Cell.cellToColumnRow(label);
         return this._cells[column][row];
@@ -73,6 +79,13 @@ export class SheetMemoryVO {
         this._cells[column][row] = cell;
     }
 
+    getOccupiedCells(): Map<string, string> {
+        return this._occupied;
+    }
+    
+    setNewOccupiedCell(occupiedCellLabel: string, user: string) {
+        this._occupied.set(occupiedCellLabel, user);
+    }
 }
 
 export default SheetMemoryVO;

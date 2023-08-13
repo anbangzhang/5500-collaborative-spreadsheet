@@ -256,7 +256,7 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
           dataTestId="decimal-button"
         />
         <Button
-          text={doneButtonText}
+          text="="
           isDigit={true}
           onClick={() => onCommandButtonClick(ButtonNames.edit_toggle)}
           className={(getDoneButtonClass())}

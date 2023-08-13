@@ -2,7 +2,7 @@ import { useState } from "react";
 import ControlPanel from "./ControlPanel";
 
 function HomePage() {
-    const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState('');
 
 
   function getTitle() {
@@ -56,6 +56,8 @@ function HomePage() {
   function getControlPanel() {
     return <ControlPanel userName={userName}/>
   }
+
+  
 
   return (
     <div className="App">

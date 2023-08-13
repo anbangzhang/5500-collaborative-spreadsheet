@@ -1,7 +1,7 @@
 import './App.css';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import HomePage from './frontend/HomePage';
-import SheetPage from './frontend/Components/SheetPage';
+import SheetPage from './frontend/components/SheetPage';
 
 function App() {
 

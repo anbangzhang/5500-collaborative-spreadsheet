@@ -20,13 +20,80 @@ const sheetClient = {
         }
         return fetch(requestURL, options)
             .then((response) => {
-                console.log(`response: ${response}`);
                 return response.json();
             })
             .then((json) => {
                 return convertToSheetMemoryVO(json);
             });
-    }
+    },
+    async lockCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
+        const path = `/lockCell`;
+        const requestURL = baseURL + path;
+        let token = btoa(user);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify({
+                "sheet_id": sheet_id,
+                "cell_label": cell_label,
+                "user": user
+            })
+        }
+        try {
+            const response = await fetch(requestURL, options);
+            if (!response.ok) {
+                console.log(`Network response was not ok. Status: ${response.status}`);
+            }
+            const json = await response.json();
+            console.log('json:', json);  
+            if (json.success) {
+                return [true, ''];
+            } else {
+                return [false, json.errorMessage];
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return [false, 'Failed to lock cell.'];
+        }
+    },
+    async releaseCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
+        const path = `/lockCell`;
+        const requestURL = baseURL + path;
+        let token = btoa(user);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify({
+                "sheet_id": sheet_id,
+                "cell_label": cell_label,
+                "user": user
+            })
+        }
+        try {
+            const response = await fetch(requestURL, options);
+            if (!response.ok) {
+                console.log(`Network response was not ok. Status: ${response.status}`);
+            }
+            const json = await response.json();
+            console.log('json:', json);  
+            if (json.success) {
+                return [true, ''];
+            } else {
+                return [false, json.errorMessage];
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return [false, 'Failed to release cell.'];
+        }
+    },
+
+
 }
 
 function convertToSheetMemoryVO(json: any): SheetMemoryVO {
@@ -35,7 +102,14 @@ function convertToSheetMemoryVO(json: any): SheetMemoryVO {
     let sheet_id = json.id;
     let sheet_column = json.cells.length;
     let sheet_row = json.cells[0].length;
-    let sheet_memory = new SheetMemoryVO(sheet_column, sheet_row, sheet_id, sheet_name, sheet_owner);
+    let _occupied = json.occupied;
+    let sheet_occupied = new Map<string, string>();
+    for (let [k, v] of Object.entries(_occupied)) {
+        if (typeof v === 'string') {
+            sheet_occupied.set(k, v);
+        }   
+    }
+    let sheet_memory = new SheetMemoryVO(sheet_column, sheet_row, sheet_id, sheet_name, sheet_owner, sheet_occupied);
 
     for (let i = 0; i < sheet_column; i++) {
         for (let j = 0; j < sheet_row; j++) {

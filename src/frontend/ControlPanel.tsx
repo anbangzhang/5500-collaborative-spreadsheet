@@ -112,15 +112,15 @@ export function ControlPanel( {userName}: ControlPanelProps) {
     }
 
     function getEditSheet(sheet: Sheet) {
-        const jumpTo = () => {
-            const w = window.open(`/${sheet.id}`);
+        const jumpTo = (userName: string) => {
+            const w = window.open(`/${sheet.id}?user=${userName}`);
             if (w) {
                 w.focus();
             } else {
                 alert('Please allow popups for this website');
             }
         }
-        return <button onClick={() => {jumpTo()}}>Edit</button>
+        return <button onClick={() => {jumpTo(userName)}}>Edit</button>
     }
 
     function deleteSheet(sheet_id: string, user_name: string) {
