@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState, useCallback } from "react";
 import Formula from "./Formula";
 import Status from "./Status";
 import KeyPad from "./Keypad";
@@ -24,6 +24,17 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
   const [statusString, setStatusString] = useState(spreadSheetController.getEditStatusString());
   const [currentCell, setCurrentCell] = useState(spreadSheetController.getWorkingCellLabel());
   const [currentlyEditing, setCurrentlyEditing] = useState(spreadSheetController.getEditStatus());
+  const [occupiedCells, setOccupiedCells] = useState(spreadSheetController.getOccupiedCells(currentUser));
+
+  const updateDisplayValues = useCallback(() => {
+    setFormulaString(spreadSheetController.getFormulaString());
+    setResultString(spreadSheetController.getResultString());
+    setStatusString(spreadSheetController.getEditStatusString());
+    setCells(spreadSheetController.getSheetDisplayStringsForGUI());
+    setCurrentCell(spreadSheetController.getWorkingCellLabel());
+    setCurrentlyEditing(spreadSheetController.getEditStatus());
+    setOccupiedCells(spreadSheetController.getOccupiedCells(currentUser));
+  }, [currentUser]);
 
   const id = sheetMemoryVO.id;
 
@@ -36,23 +47,26 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
         setSheetMemoryVO(sheet);
         // update sheet memory in controller
         spreadSheetController.setSheetMemory(sheetMemoryVO);
+        updateDisplayValues();
       })
       .catch((error: SetStateAction<string | null>) => {
         console.log(error);
       });
     }, 500);
     return () => clearInterval(interval);
-  }, [id, sheetMemoryVO]);
+  }, [id, sheetMemoryVO, updateDisplayValues]);
 
-  function updateDisplayValues(): void {
+  // function updateDisplayValues(): void {
 
-    setFormulaString(spreadSheetController.getFormulaString());
-    setResultString(spreadSheetController.getResultString());
-    setStatusString(spreadSheetController.getEditStatusString());
-    setCells(spreadSheetController.getSheetDisplayStringsForGUI());
-    setCurrentCell(spreadSheetController.getWorkingCellLabel());
-    setCurrentlyEditing(spreadSheetController.getEditStatus());
-  }
+  //   setFormulaString(spreadSheetController.getFormulaString());
+  //   setResultString(spreadSheetController.getResultString());
+  //   setStatusString(spreadSheetController.getEditStatusString());
+  //   setCells(spreadSheetController.getSheetDisplayStringsForGUI());
+  //   setCurrentCell(spreadSheetController.getWorkingCellLabel());
+  //   setCurrentlyEditing(spreadSheetController.getEditStatus());
+  //   setOccupiedCells(spreadSheetController.getOccupiedCells(currentUser));
+  // }
+
 
   function onCommandButtonClick(command: string): void {
     switch (command) {
@@ -207,7 +221,8 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
       {<SheetHolder cellsValues={cells}
         onClick={onCellClick}
         currentCell={currentCell}
-        currentlyEditing={currentlyEditing}></SheetHolder>}
+        currentlyEditing={currentlyEditing}
+        occupiedCells={occupiedCells}></SheetHolder>}
       <KeyPad onButtonClick={onButtonClick}
         onCommandButtonClick={onCommandButtonClick}
         currentlyEditing={currentlyEditing}></KeyPad>

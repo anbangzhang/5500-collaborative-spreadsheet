@@ -227,7 +227,16 @@ export class SheetController {
         return "current cell: " + this.getWorkingCellLabel();
     }
 
-
+    public getOccupiedCells(currentUser: string): string[] {
+        const occupiedCells = this._memory.getOccupiedCells();
+        let result: string[] = [];
+        for (let [label, user] of occupiedCells) {
+            if (user !== currentUser) {
+                result.push(label);
+            }
+        }
+        return result;
+    }
 }
 
 export default SheetController;

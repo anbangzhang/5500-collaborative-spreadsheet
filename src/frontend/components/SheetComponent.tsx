@@ -12,9 +12,10 @@ interface SheetComponentProps {
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
     currentCell: string;
     currentlyEditing: boolean;
+    occupiedCells: Array<string>;
 }
 
-function SheetComponent({ cellsValues, onClick, currentCell, currentlyEditing }: SheetComponentProps) {
+function SheetComponent({ cellsValues, onClick, currentCell, currentlyEditing, occupiedCells }: SheetComponentProps) {
 
       /**
    * 
@@ -36,24 +37,32 @@ function SheetComponent({ cellsValues, onClick, currentCell, currentlyEditing }:
     if (cell === currentCell) {
       return "cell-selected";
     }
+    if (cell in occupiedCells) {
+      return "cell-locked";
+    }
     return "cell";
+  }
+
+  function getColumnNames(cellsValues: Array<Array<string>>) {
+    let columnNames: Array<string> = [];
+    for (let i = 0; i < cellsValues[0].length; i++) {
+      columnNames.push(Cell.columnNumberToName(i));
+    }
+    return columnNames;
   }
 
   return (
     <div className="sheet">
-      <table>
+      <table className="sheet-table">
         <tbody>
-          {/* Header row for column labels */}
           <tr>
-            <td></td> {/* Empty cell for the corner */}
-            {cellsValues[0].map((_, colIndex) => (
-              <td key={colIndex}>{Cell.columnNumberToName(colIndex)}</td>
-            ))}
+            <td></td>{getColumnNames(cellsValues).map((columnName, index) => (<td key={index}>{columnName}</td>))}
           </tr>
-          {/* Data rows */}
           {cellsValues.map((row, rowIndex) => (
             <tr key={rowIndex}>
-              <td>{rowIndex + 1}</td>
+              <td>
+                {rowIndex + 1}
+              </td>
               {row.map((cell, colIndex) => (
                 <td key={colIndex}>
                   <button
