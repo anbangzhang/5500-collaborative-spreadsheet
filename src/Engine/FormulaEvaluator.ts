@@ -187,9 +187,15 @@ export class FormulaEvaluator {
         this._lastResult = result
       }
 
-      // if the token is a cell reference get the value of the cell
-    } else if (this.isCellReference(token)) {
-      [result, this._errorMessage] = this.getCellValue(token);
+    // if the token is a function call get the value of the function
+    } else if (this.isFunctionCall(token)) {
+      const intermediate_result: number = this.expression();
+      if (this._currentFormula.length === 0 || this._currentFormula.shift() !== ")") {
+        this._errorOccured = true;
+        this._errorMessage = ErrorMessages.missingParentheses;
+        this._lastResult = result
+      }
+      [result, this._errorMessage] = this.functionCall(token, intermediate_result);
 
       // if the cell value is a number set the result to the number
       if (this._errorMessage !== "") {
@@ -197,7 +203,17 @@ export class FormulaEvaluator {
         this._lastResult = result;
       }
 
-      // otherwise set the errorOccured flag to true  
+    // if the token is a cell reference get the value of the cell
+    } else if (this.isCellReference(token)) {
+      [result, this._errorMessage] = this.getCellValue(token);
+
+    // if the cell value is a number set the result to the number
+      if (this._errorMessage !== "") {
+        this._errorOccured = true;
+        this._lastResult = result;
+      }
+
+    // otherwise set the errorOccured flag to true  
     } else {
       this._errorOccured = true;
       this._errorMessage = ErrorMessages.invalidFormula;
@@ -224,6 +240,55 @@ export class FormulaEvaluator {
 
     return Cell.isValidCellLabel(token);
   }
+
+  /**
+   * 
+   * @param token
+   * @returns true if the token is a function call
+   */
+  isFunctionCall(token: TokenType): boolean {
+    if (token[0] === "#") {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 
+   * @param token
+   * @returns The value of the function call
+   */
+  functionCall(token: TokenType, intermediate_result: number): [number, string] {
+    let reference = token[1];
+    if (reference === "s") {
+      return [(intermediate_result * intermediate_result), ""];
+    } else if (reference === "d") {
+      return [(intermediate_result * intermediate_result * intermediate_result), ""];
+    } else if (reference === "f") {
+      return [(1 / intermediate_result), ""];
+    } else if (reference === "g") {
+      return [Math.sqrt(intermediate_result), ""];
+    } else if (reference === "h") {
+      return [Math.cbrt(intermediate_result), ""];
+    } else if (reference === "j") {
+      return [Math.random(), ""];
+    } else if (reference === "k") {
+      return [Math.sin(intermediate_result), ""];
+    } else if (reference === "l") {
+      return [Math.cos(intermediate_result), ""];
+    } else if (reference === "w") {
+      return [Math.tan(intermediate_result), ""];
+    } else if (reference === "e") {
+      return [Math.asin(intermediate_result), ""];
+    } else if (reference === "r") {
+      return [Math.acos(intermediate_result), ""];
+    } else if (reference === "t") {
+      return [Math.atan(intermediate_result), ""];
+    } else {
+      return [0, ErrorMessages.invalidFunction];
+    }
+  }
+    
 
   /**
    * 

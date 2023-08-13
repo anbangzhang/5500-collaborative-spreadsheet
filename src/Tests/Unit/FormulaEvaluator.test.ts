@@ -314,5 +314,135 @@ describe("FormulaEvaluator", () => {
       });
     });
 
+    describe("when the formula is 2 ^ 2", () => {
+      it("returns 4", () => {
+        const formula = ["#s", "2", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(4);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 2 ^ 3", () => {
+      it("returns 8", () => {
+        const formula = ["#d", "2", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(8);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 4 sqrt", () => {
+      it("returns 2", () => {
+        const formula = ["#g", "4", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(2);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 8 cqrt", () => {
+      it("returns 2", () => {
+        const formula = ["#h", "8", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(2);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 0 sin", () => {
+      it("returns 0", () => {
+        const formula = ["#k", "0", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(0);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 0 cos", () => {
+      it("returns 1", () => {
+        const formula = ["#l", "0", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(1);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 0 tan", () => {
+      it("returns 0", () => {
+        const formula = ["#w", "0", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(0);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 0 arcsin", () => {
+      it("returns 0", () => {
+        const formula = ["#e", "0", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(0);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 1 arccos", () => {
+      it("returns 0", () => {
+        const formula = ["#r", "1", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(0);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 0 arctan", () => {
+      it("returns 0", () => {
+        const formula = ["#t", "0", ")"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(0);
+        expect(error).toEqual("");
+      });
+    });
+
   });
 });
