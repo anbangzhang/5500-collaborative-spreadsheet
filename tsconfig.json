@@ -1,17 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2016",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "types": [
-      "./types",
-      "node",
-      "jest"
-    ],
-    "module": "commonjs",
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -19,6 +13,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -27,5 +22,5 @@
   },
   "include": [
     "src"
-, "5500-collaborative-spreadsheet/src/SheetDB.test copy.ts"  ]
+  ]
 }
