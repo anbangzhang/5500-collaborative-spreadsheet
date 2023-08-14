@@ -260,41 +260,36 @@ export class FormulaEvaluator {
    */
   functionCall(token: TokenType, intermediate_result: number): [number, string] {
     let reference = token[1];
+    let answer = 0;
+    const x = 5;
     if (reference === "s") {
-      return [(intermediate_result * intermediate_result), ""];
+      answer = Number((intermediate_result * intermediate_result).toFixed(x));
     } else if (reference === "d") {
-      return [(intermediate_result * intermediate_result * intermediate_result), ""];
+      answer = Number((intermediate_result * intermediate_result * intermediate_result).toFixed(x));
     } /*else if (reference === "f") {
-      return [(1 / intermediate_result), ""];
+      answer = Number((1 / intermediate_result).toFixed());
     } */ else if (reference === "g") {
-      const answer = Math.sqrt(intermediate_result).toFixed(2);
-      return [Number(answer), ""];
+      answer = Number(Math.sqrt(intermediate_result).toFixed(x));
     } else if (reference === "h") {
-      const answer = Math.cbrt(intermediate_result).toFixed(2);
-      return [Number(answer), ""];
+      answer = Number(Math.cbrt(intermediate_result).toFixed(x));
     } /*else if (reference === "j") {
-      return [Math.random(), ""];
+      answer = Number(Math.random());
     } */ else if (reference === "k") {
-      const answer = Math.sin(intermediate_result).toFixed(2);
-      return [Number(answer), ""];
+      answer = Number(Math.sin(intermediate_result).toFixed(x));
     } else if (reference === "l") {
-      const answer = Math.cos(intermediate_result).toFixed(2);
-      return [Number(answer), ""];
+      answer = Number(Math.cos(intermediate_result).toFixed(x));
     } else if (reference === "w") {
-      const answer = Math.tan(intermediate_result).toFixed(2);
-      return [Number(answer), ""];
+      answer = Number(Math.tan(intermediate_result).toFixed(x));
     } else if (reference === "e") {
-      const answer = Math.asin(intermediate_result).toFixed(2);
-      return [Number(answer), ""];
+      answer = Number(Math.asin(intermediate_result).toFixed(x));
     } else if (reference === "r") {
-      const answer = Math.acos(intermediate_result).toFixed(2);
-      return [Number(answer), ""];
+      answer = Number(Math.acos(intermediate_result).toFixed(x));
     } else if (reference === "t") {
-      const answer = Math.atan(intermediate_result).toFixed(2);
-      return [Number(answer), ""];
+      answer = Number(Math.atan(intermediate_result).toFixed(x));
     } else {
       return [0, ErrorMessages.invalidFunction];
     }
+    return [answer, ""];
   }
     
 
