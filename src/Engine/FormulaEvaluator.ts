@@ -267,23 +267,31 @@ export class FormulaEvaluator {
     } /*else if (reference === "f") {
       return [(1 / intermediate_result), ""];
     } */ else if (reference === "g") {
-      return [Math.sqrt(intermediate_result), ""];
+      const answer = Math.sqrt(intermediate_result).toFixed(2);
+      return [Number(answer), ""];
     } else if (reference === "h") {
-      return [Math.cbrt(intermediate_result), ""];
+      const answer = Math.cbrt(intermediate_result).toFixed(2);
+      return [Number(answer), ""];
     } /*else if (reference === "j") {
       return [Math.random(), ""];
     } */ else if (reference === "k") {
-      return [Math.sin(intermediate_result), ""];
+      const answer = Math.sin(intermediate_result).toFixed(2);
+      return [Number(answer), ""];
     } else if (reference === "l") {
-      return [Math.cos(intermediate_result), ""];
+      const answer = Math.cos(intermediate_result).toFixed(2);
+      return [Number(answer), ""];
     } else if (reference === "w") {
-      return [Math.tan(intermediate_result), ""];
+      const answer = Math.tan(intermediate_result).toFixed(2);
+      return [Number(answer), ""];
     } else if (reference === "e") {
-      return [Math.asin(intermediate_result), ""];
+      const answer = Math.asin(intermediate_result).toFixed(2);
+      return [Number(answer), ""];
     } else if (reference === "r") {
-      return [Math.acos(intermediate_result), ""];
+      const answer = Math.acos(intermediate_result).toFixed(2);
+      return [Number(answer), ""];
     } else if (reference === "t") {
-      return [Math.atan(intermediate_result), ""];
+      const answer = Math.atan(intermediate_result).toFixed(2);
+      return [Number(answer), ""];
     } else {
       return [0, ErrorMessages.invalidFunction];
     }
