@@ -34,7 +34,6 @@ export class SheetDB {
 
     constructor(test?: boolean) {
         if (test) {
-            this._sheetDirectory = path.join(__dirname, "test/data");
             this._sheetFile = path.join(__dirname, "data/test_sheet.json");
             this._sheetDetailFile = path.join(__dirname, "data/test_sheetDetail.json");
         }
