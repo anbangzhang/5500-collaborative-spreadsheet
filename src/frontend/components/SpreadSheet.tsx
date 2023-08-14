@@ -8,22 +8,31 @@ import { ButtonNames } from "../GlobalDefinitions";
 import SheetMemoryVO from "../SheetMemoryVO";
 import { sheetClient } from "../SheetClient";
 import { DefaultValue } from "../../engine/GlobalDefinitions";
-import CellVO from "../CellVO";
+import { setCookie } from "./CookieUtil";
 
 interface SpreadSheetProps {
   sheetMemory: SheetMemoryVO;
   currentUser: string;
+  currentCellLabel: string;
 }
 
 let spreadSheetController: SheetController = new SheetController(DefaultValue.column, DefaultValue.row);
 
-export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
-  
+export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: SpreadSheetProps) {
+
+  let initEditingStatus = false;
+  for (let [label, user] of sheetMemory.getOccupiedCells()) {
+    if (label === currentCellLabel && user === currentUser) {
+      initEditingStatus = true;
+      break;
+    }
+  }
+
   // the spreadsheet default starts at A1
   const [sheetMemoryVO, setSheetMemoryVO] = useState(sheetMemory);
-  const [currentCell, setCurrentCell] = useState('A1');
+  const [currentCell, setCurrentCell] = useState(currentCellLabel);
   // initialized to false because the user is not editing the cell
-  const [currentlyEditing, setCurrentlyEditing] = useState(false);
+  const [currentlyEditing, setCurrentlyEditing] = useState(initEditingStatus);
   const [formulaString, setFormulaString] = useState(sheetMemoryVO.getCellByLabel(currentCell).getFormulaString())
   const [resultString, setResultString] = useState(sheetMemoryVO.getCellByLabel(currentCell).getDisplayString())
   const [cells, setCells] = useState(spreadSheetController.getSheetDisplayStringsForGUI());
@@ -53,9 +62,8 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
     setStatusString(getStatusString());
     setCells(spreadSheetController.getSheetDisplayStringsForGUI());
     setOccupiedCells(spreadSheetController.getOccupiedCells(currentUser));
+    setCookie('currentCell', currentCell, 1);
   }, [currentCell, currentUser, getCurrentWorkingCell, getStatusString]);
-    //setCurrentCell(spreadSheetController.getWorkingCellLabel());
-    //setCurrentlyEditing(spreadSheetController.getEditStatus());
 
     const id = sheetMemoryVO.id;
 
@@ -84,35 +92,31 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
         if (!currentlyEditing) {
           // get the occupied cells from the sheet memory
           // throws an error if the cell is occupied
-          let occupiedCells = sheetMemoryVO.getOccupiedCells();
-          if (occupiedCells.get(currentCell) !== undefined && occupiedCells.get(currentCell) !== currentUser) {
+          if (occupiedCells.includes(currentCell)) {
             alert("This cell is occupied by another user.");
+            break;
           }
           // clicking = when not editing will lock the cell
           sheetClient.lockCell(sheetMemoryVO.id, currentCell, currentUser)
-            .then((lockResult) => {
-              if (!lockResult[0]) {
-                alert(lockResult[1]);
-                return;
-              }
-            })
-          setCurrentlyEditing(true);
-          //spreadSheetController.setEditStatus(true);
-          //setStatusString(spreadSheetController.getEditStatusString());
-          sheetMemoryVO.setNewOccupiedCell(currentCell, currentUser);
+          .then((lockResult) => {
+            if (!lockResult[0]) {
+              alert(lockResult[1]);
+            } else {
+              setCurrentlyEditing(true);
+              sheetMemoryVO.setNewOccupiedCell(currentCell, currentUser);
+            }
+          });
         } else {
           // clicking = when editing will unlock the cell
           sheetClient.releaseCell(sheetMemoryVO.id, currentCell, currentUser)
             .then((releaseResult) => {
               if (!releaseResult[0]) {
                 alert(releaseResult[1]);
-                return;
+              } else {
+                setCurrentlyEditing(false);
+                sheetMemoryVO.removeOccupiedCell(currentCell);
               }
             })
-          setCurrentlyEditing(false);
-          //spreadSheetController.setEditStatus(false);
-          //setStatusString(spreadSheetController.getEditStatusString());
-          sheetMemoryVO.removeOccupiedCell(currentCell);
         }
         break;
       case ButtonNames.clear:
@@ -202,20 +206,17 @@ export function SpreadSheet({ sheetMemory, currentUser }: SpreadSheetProps) {
       // if the edit status is true then add the token to the machine
       if (currentlyEditing) {
         // first check circular dependency
-        sheetClient.referenceCheck(sheetMemoryVO.id, currentCell, realCellLabel)
+        sheetClient.referenceCheck(sheetMemoryVO.id, currentCell, realCellLabel, currentUser)
           .then((okToAdd) => {
             if (okToAdd[0]) {
               sheetClient.updateCell(sheetMemoryVO.id, currentCell, realCellLabel, currentUser)
                 .then((updateResult) => {
                   if (!updateResult) {
                     alert("Cannot update cell.");
-                    return;
                   }
-                  return;
                 })
             } else {
               alert(okToAdd[1]);
-              return;
             }
             updateDisplayValues();
           })

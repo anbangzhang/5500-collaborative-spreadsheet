@@ -28,13 +28,13 @@ export class SheetController {
     private _currentWorkingRow = 0;
     private _currentWorkingColumn = 0;
 
-  // The current cell is being edited
-  private _cellIsBeingEdited: boolean;
+    // The current cell is being edited
+    private _cellIsBeingEdited: boolean;
 
 
     /**
-   * constructor
-   */
+    * constructor
+    */
     constructor(columns: number, rows: number) {
         this._memory = new SheetMemoryVO(columns, rows, '', '', '', new Map<string, string>());
         this._currentWorkingColumn = 0;
@@ -47,32 +47,6 @@ export class SheetController {
     }
 
 
-    /**  
-   *  add cell reference to current formula
-   * 
-   * @param cell:string
-   * returns true if the token was added to the formula
-   * returns false if a circular dependency is detected.
-   * 
-   * Assuming that the dependents have been updated
-   * we will look at the dependsOn array for the cell being inserted
-   * if the current cell is in the dependsOn array then we have a circular referenceoutloo
-   */
-  addCell(cellReference: string): void {
-        // get the dependents for the cell being inserted
-        if (cellReference === this.getWorkingCellLabel()) {
-        // do nothing
-        return;
-        }
-        let currentCell: CellVO = this._memory.getCellByColumnRow(this._currentWorkingColumn, this._currentWorkingRow);
-        let currentLabel = currentCell.getLabel();
-        
-        // Check to see if we would be introducing a circular dependency
-        // this function will update the dependency for the cell being inserted
-
-        // We have checked to see if this new token introduces a circular dependency
-        // if it does not then we can add the token to the formula
-    }
 
 
 

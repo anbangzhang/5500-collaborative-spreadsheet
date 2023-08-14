@@ -22,25 +22,12 @@ function SheetPage(props: any) {
         user = getCookie('user')!;
     }
 
-    var id = currentURL.split('/')[currentURL.split('/').length - 1];
+    let currentCell = getCookie('currentCell');
+    if (currentCell === null) {
+        currentCell = 'A1';
+    }
 
-    // useEffect(() => {
-    //     setLoading(true);
-    //     // check if the url contains a user name
-        
-    //     const interval = setInterval(() => {
-    //         sheetClient.getSheet(id!)
-    //         .then((sheet: SetStateAction<SheetMemoryVO | null>) => {
-    //             setSheet(sheet);
-    //             setLoading(false);
-    //         })
-    //         .catch((error: SetStateAction<string | null>) => {
-    //             setError(error);
-    //             setLoading(false);
-    //         });
-    //     }, 333);
-    //     return () => clearInterval(interval);
-    // }, [id]);
+    var id = currentURL.split('/')[currentURL.split('/').length - 1];
 
     useEffect(() => {
         setLoading(true);
@@ -67,7 +54,7 @@ function SheetPage(props: any) {
             <h1>{returnLoggedInUser(user)}</h1>
             <h1>{sheet?.name}</h1>
             <h2>Owner: {sheet?.owner}</h2>
-            {sheet && <SpreadSheet sheetMemory={sheet} currentUser={user}/>}
+            {sheet && <SpreadSheet sheetMemory={sheet} currentUser={user} currentCellLabel={currentCell}/>}
         </div>
     )
 }

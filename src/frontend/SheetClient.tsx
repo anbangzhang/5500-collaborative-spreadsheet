@@ -10,7 +10,7 @@ const baseURL = `http://${hostname}:${port}`;
 
 
 const sheetClient = {
-    getSheet(sheet_id: string): Promise<SheetMemoryVO> {
+    async getSheet(sheet_id: string): Promise<SheetMemoryVO> {
         const path = `/getSheet`;
         const requestURL = baseURL + path;
         const options = {
@@ -18,15 +18,11 @@ const sheetClient = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ "sheet_id": sheet_id })
         }
-        return fetch(requestURL, options)
-            .then((response) => {
-                return response.json();
-            })
-            .then((json) => {
-                return convertToSheetMemoryVO(json);
-            });
+        const response = await fetch(requestURL, options);
+        const json = await response.json();
+        return convertToSheetMemoryVO(json);
     },
-    lockCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
+    async lockCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
         const path = `/lockCell`;
         const requestURL = baseURL + path;
         let token = btoa(user);
@@ -38,24 +34,19 @@ const sheetClient = {
             },
             body: JSON.stringify({
                 "sheet_id": sheet_id,
-                "cell_label": cell_label,
-                "user": user
+                "cell_label": cell_label
             })
         }
-        return fetch(requestURL, options)
-            .then((response) => {
-                return response.json();
-            })
-            .then((json) => {
-                if (json.success) {
-                    return [true, ''];
-                } else {
-                    return [false, json.errorMessage];
-                }
-        });
+        const response = await fetch(requestURL, options);
+        const json = await response.json();
+        if (json.success) {
+            return [true, ''];
+        } else {
+            return [false, json.errorMessage];
+        }
     },
-    releaseCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
-        const path = `/lockCell`;
+    async releaseCell(sheet_id: string, cell_label: string, user: string): Promise<[boolean, string]> {
+        const path = `/releaseCell`;
         const requestURL = baseURL + path;
         let token = btoa(user);
         const options = {
@@ -66,23 +57,18 @@ const sheetClient = {
             },
             body: JSON.stringify({
                 "sheet_id": sheet_id,
-                "cell_label": cell_label,
-                "user": user
+                "cell_label": cell_label
             })
         }
-        return fetch(requestURL, options)
-        .then((response) => {
-            return response.json();
-        })
-        .then((json) => {
-            if (json.success) {
-                return [true, ''];
-            } else {
-                return [false, json.errorMessage];
-            }
-        });
+        const response = await fetch(requestURL, options);
+        const json = await response.json();
+        if (json.success) {
+            return [true, ''];
+        } else {
+            return [false, json.errorMessage];
+        }
     },
-    referenceCheck(sheet_id: string, current_cell: string, user: string): Promise<[boolean, string]> {
+    async referenceCheck(sheet_id: string, current_cell: string, referenced_cell: string, user: string): Promise<[boolean, string]> {
         const path = `/referenceCheck`;
         const requestURL = baseURL + path;
         let token = btoa(user);
@@ -95,22 +81,18 @@ const sheetClient = {
             body: JSON.stringify({
                 "sheet_id": sheet_id,
                 "current_cell": current_cell,
-                "user": user
+                "referenced_cell": referenced_cell
             })
         }
-        return fetch(requestURL, options)
-        .then((response) => {
-            return response.json();
-        })
-        .then((json) => {
-            if (json.success) {
-                return [true, ''];
-            } else {
-                return [false, json.errorMessage];
-            }
-        });
+        const response = await fetch(requestURL, options);
+        const json = await response.json();
+        if (json.allow) {
+            return [true, ''];
+        } else {
+            return [false, 'Causing circular reference'];
+        }
     },
-    updateCell(sheet_id: string, cell_label: string, operator: string, user: string): Promise<boolean> {
+    async updateCell(sheet_id: string, cell_label: string, operator: string, user: string): Promise<boolean> {
         const path = `/updateCell`;
         const requestURL = baseURL + path;
         let token = btoa(user);
@@ -123,17 +105,12 @@ const sheetClient = {
             body: JSON.stringify({
                 "sheet_id": sheet_id,
                 "cell_label": cell_label,
-                "operator": operator,
-                "user": user
+                "operator": operator
             })
         }
-        return fetch(requestURL, options)
-        .then((response) => {
-            return response.json();
-        }
-        ).then((json) => {
-            return json.success;
-        });
+        const response = await fetch(requestURL, options);
+        const json = await response.json();
+        return json.success;
 
     }
 
