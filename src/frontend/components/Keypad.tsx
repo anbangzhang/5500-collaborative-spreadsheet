@@ -116,7 +116,7 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
           text="C"
           isDigit={false}
           onClick={() => onCommandButtonClick(ButtonNames.clear)}
-          className="button-number"
+          className="button-operator"
           dataTestId="left-parenthesis-button"
         />
         <Button
@@ -176,7 +176,7 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
           text="("
           isDigit={false}
           onClick={onButtonClick}
-          className="button-number"
+          className="button-operator"
           dataTestId="right-parenthesis-button"
         />
         <Button
@@ -215,21 +215,21 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
       <Button
           text="sin⁻¹"
           isDigit={false}
-          onClick={() => onCommandButtonClick(ButtonNames.sinInverse)}
+          onClick={() => onCommandButtonClick(ButtonNames.arcsin)}
           className="button-operator"
           dataTestId="invsin-button"
         />
       <Button
           text="cos⁻¹"
           isDigit={false}
-          onClick={() => onCommandButtonClick(ButtonNames.cosInverse)}
+          onClick={() => onCommandButtonClick(ButtonNames.arccos)}
           className="button-operator"
           dataTestId="invcos-button"
         />
       <Button
           text="tan⁻¹"
           isDigit={false}
-          onClick={() => onCommandButtonClick(ButtonNames.tanInverse)}
+          onClick={() => onCommandButtonClick(ButtonNames.arctan)}
           className="button-operator"
           dataTestId="invtan-button"
         />

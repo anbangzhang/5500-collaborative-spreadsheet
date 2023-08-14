@@ -82,8 +82,7 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
   
 
   function onCommandButtonClick(command: string): void {
-    switch (command) {
-      case ButtonNames.edit_toggle:
+    if (command === ButtonNames.edit_toggle) {
         if (!currentlyEditing) {
           // get the occupied cells from the sheet memory
           // throws an error if the cell is occupied
@@ -113,13 +112,30 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
               }
             })
         }
-        break;
-      case ButtonNames.clear:
-        // update cell
-        break;
-      case ButtonNames.allClear:
-        // update cell
-        break;
+    } else if (command === ButtonNames.rand) {
+      if (currentlyEditing) {
+        let randNum = Math.floor(Math.random() * 10); // random number between 0 and 9
+        let randString = randNum.toString();
+        sheetClient.updateCell(sheetMemoryVO.id, currentCell, randString, currentUser)
+          .then((updateResult) => {
+            if (!updateResult) {
+              alert('Oops, the cell is not happy to update. Please try again. :)');
+              return;
+            }
+            return;
+          })
+      }
+    } else {
+      if (currentlyEditing) {
+        sheetClient.updateCell(sheetMemoryVO.id, currentCell, command, currentUser)
+          .then((updateResult) => {
+            if (!updateResult) {
+              alert('Oops, the cell is not happy to update. Please try again. :)');
+              return;
+            }
+            return;
+          })
+      }
     }
     updateDisplayValues();
   }
