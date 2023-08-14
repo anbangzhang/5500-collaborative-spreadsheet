@@ -25,7 +25,6 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
     return "button-edit-start";
   } // getDoneButtonClass
 
-  let doneButtonText = currentlyEditing ? ButtonNames.done : ButtonNames.edit;
 
   // the buttons use one of three classes
   // numberButton, operatorButton, and otherButton

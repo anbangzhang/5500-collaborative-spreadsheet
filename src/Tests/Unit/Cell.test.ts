@@ -1,6 +1,6 @@
 
-import { Cell } from "../engine/Cell";
-import { ErrorMessages } from "../engine/GlobalDefinitions";
+import { Cell } from "../../engine/Cell";
+import { ErrorMessages } from "../../engine/GlobalDefinitions";
 
 describe("Cell", () => {
   describe("constructor", () => {

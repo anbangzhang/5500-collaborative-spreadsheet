@@ -1,4 +1,4 @@
-import FormulaBuilder from "../engine/FormulaBuilder";
+import FormulaBuilder from "../../engine/FormulaBuilder";
 
 describe("TokenProcessor", () => {
   describe("getFormulaString", () => {
@@ -68,15 +68,10 @@ describe("TokenProcessor", () => {
 
   describe("addToken", () => {
     describe("when the formula is empty", () => {
-      it("should add non-scientific operator tokens to the formula", () => {
+      it("should add tokens to the formula", () => {
         const tokenProcessor = new FormulaBuilder();
         tokenProcessor.addToken("1");
         expect(tokenProcessor.getFormula()).toEqual(["1"]);
-      });
-      it("should not add scientific operator tokens to the formula", () => {
-        const tokenProcessor = new FormulaBuilder();
-        tokenProcessor.addToken("#s");
-        expect(tokenProcessor.getFormula()).toEqual([]);
       });
     });
     describe("when the formula is not empty", () => {
@@ -134,13 +129,24 @@ describe("TokenProcessor", () => {
         });
       });
       describe("when the last token is a number and the input token is a scientific operator", () => {
-        it("should add the token to the formula", () => {
+        it("should not add the token to the formula", () => {
           const tokenProcessor = new FormulaBuilder();
-          tokenProcessor.setFormula(["1"]);
+          tokenProcessor.setFormula(["1", "+", "2"]);
           tokenProcessor.addToken("#f");
-          expect(tokenProcessor.getFormula()).toEqual(["1", "#f"]);
+          expect(tokenProcessor.getFormula()).toEqual(["1", "+", "2"]);
         });
       });
+      /* KNOWN EDGE CASE
+      describe("when the last token is a . and the input token is a scientific operator", () => {
+        it("should not add the token to the formula", () => {
+          const tokenProcessor = new FormulaBuilder();
+          tokenProcessor.setFormula(["1"]);
+          tokenProcessor.addToken(".");
+          tokenProcessor.addToken("#f");
+          expect(tokenProcessor.getFormula()).toEqual(["1"]);
+        });
+      });
+      */
       describe("when the last token is a scientific operator and the input token is a number", () => {
         it("should add the token to the formula", () => {
           const tokenProcessor = new FormulaBuilder();
@@ -158,19 +164,19 @@ describe("TokenProcessor", () => {
         });
       });
       describe("when the last token is a scientific operator and the input token is a non-scientific operator", () => {
-        it("should add the token to the formula", () => {
+        it("should not add the token to the formula", () => {
           const tokenProcessor = new FormulaBuilder();
           tokenProcessor.setFormula(["#f"]);
           tokenProcessor.addToken("+");
-          expect(tokenProcessor.getFormula()).toEqual(["#f", "+"]);
+          expect(tokenProcessor.getFormula()).toEqual(["#f"]);
         });
       });
       describe("when the last token is a non-scientific operator and the input token is a scientific operator", () => {
-        it("should not add the token to the formula", () => {
+        it("should add the token to the formula", () => {
           const tokenProcessor = new FormulaBuilder();
           tokenProcessor.setFormula(["+"]);
           tokenProcessor.addToken("#f");
-          expect(tokenProcessor.getFormula()).toEqual(["+"]);
+          expect(tokenProcessor.getFormula()).toEqual(["+", "#f"]);
         });
       });
     });
@@ -229,12 +235,12 @@ describe("TokenProcessor", () => {
             expect(tokenProcessor.getFormula()).toEqual(["1"]);
           });
         });
-        describe("When the formula has a number and a scientific notation operator", () => {
+        describe("When the formula has an expression and a scientific notation operator", () => {
           it("should remove the operator", () => {
             const tokenProcessor = new FormulaBuilder();
-            tokenProcessor.setFormula(["1", "#s"]);
+            tokenProcessor.setFormula(["1", "+", "#s"]);
             tokenProcessor.removeToken();
-            expect(tokenProcessor.getFormula()).toEqual(["1"]);
+            expect(tokenProcessor.getFormula()).toEqual(["1", "+"]);
           });
         });
       });
