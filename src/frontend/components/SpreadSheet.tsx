@@ -216,7 +216,7 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
         onClick={onCellClick}
         currentCell={currentCell}
         currentlyEditing={currentlyEditing}
-        occupiedCells={sheetMemory.getOccupiedCells()}></SheetHolder>}
+        occupiedCells={SheetHelper.getOccupiedCellsInMap(sheetMemoryVO, currentUser)}></SheetHolder>}
       <KeyPad onButtonClick={onButtonClick}
         onCommandButtonClick={onCommandButtonClick}
         currentlyEditing={currentlyEditing}></KeyPad>

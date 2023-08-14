@@ -35,6 +35,18 @@ export class SheetHelper {
         }
         return result;
     }
+
+    public static getOccupiedCellsInMap(sheetMemory: SheetMemoryVO, currentUser: string): Map<string, string> {
+        const occupiedCells = sheetMemory.getOccupiedCells();
+        let result: Map<string, string> = new Map();
+        for (let [label, user] of occupiedCells) {
+            if (user !== currentUser) {
+                result.set(label, user);
+            }
+        }
+        return result;
+    }
+
 }
 
 export default SheetHelper;
