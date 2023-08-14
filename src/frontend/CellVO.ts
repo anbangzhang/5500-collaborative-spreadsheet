@@ -30,10 +30,44 @@ export class CellVO {
         return this._formula;
     }
 
-    getFormulaString(): string {
+    parseFormulaString(): string {
         let formulaString = "";
         for (let token of this._formula) {
-            formulaString += token;
+            switch(token) {
+                case "#s":
+                    formulaString += "sqr(";
+                    break;
+                case "#d":
+                    formulaString += "cube(";
+                    break;
+                case "#g":
+                    formulaString += "²√(";
+                    break;
+                case "#h":
+                    formulaString += "³√(";
+                    break;
+                case "#k":
+                    formulaString += "sin(";
+                    break;
+                case "#l":
+                    formulaString += "cos(";
+                    break;
+                case "#w":
+                    formulaString += "tan(";
+                    break;
+                case "#e":
+                    formulaString += "arcsin(";
+                    break;
+                case "#r":
+                    formulaString += "arccos(";
+                    break;
+                case "#t":
+                    formulaString += "arctan(";
+                    break;
+                default:
+                    formulaString += token;
+                    break;
+            }
         }
         return formulaString;
     }

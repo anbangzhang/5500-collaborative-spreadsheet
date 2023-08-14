@@ -14,6 +14,7 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+    
 }
 
 .cell-selected {
@@ -68,4 +69,21 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+}
+
+.sheet {
+    position: relative;
+    display: inline-block;
+}
+
+.user-label {
+    position: absolute;
+    top: -10px;
+    left: 10%;
+    transform: translateX(-50%);
+    background-color: #e74c3c;
+    color: white;
+    padding: 2px 8px;
+    font-size: 12px;
+    border-radius: 4px;
 }

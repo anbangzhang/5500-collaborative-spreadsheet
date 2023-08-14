@@ -16,7 +16,7 @@ interface SheetHolderProps {
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
     currentCell: string;
     currentlyEditing:boolean;
-    occupiedCells: Array<string>;
+    occupiedCells: Map<string, string>;
   }
   
   function SheetHolder({ cellsValues, onClick, currentCell, currentlyEditing, occupiedCells}: SheetHolderProps) {

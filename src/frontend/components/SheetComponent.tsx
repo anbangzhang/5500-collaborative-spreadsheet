@@ -12,7 +12,7 @@ interface SheetComponentProps {
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
     currentCell: string;
     currentlyEditing: boolean;
-    occupiedCells: Array<string>;
+    occupiedCells: Map<string, string>;
 }
 
 function SheetComponent({ cellsValues, onClick, currentCell, currentlyEditing, occupiedCells }: SheetComponentProps) {
@@ -34,8 +34,10 @@ function SheetComponent({ cellsValues, onClick, currentCell, currentlyEditing, o
     if (cell === currentCell && currentlyEditing) {
       return "cell-editing";
     }
-    if (occupiedCells.includes(cell)) {
-      return "cell-locked";
+    for (const occupiedCell of occupiedCells.keys()) {
+      if (cell === occupiedCell) {
+        return "cell-locked";
+      }
     }
     if (cell === currentCell) {
       return "cell-selected";
@@ -73,6 +75,7 @@ function SheetComponent({ cellsValues, onClick, currentCell, currentlyEditing, o
                   >
                     {cell}
                   </button>
+                  {occupiedCells.get(Cell.columnRowToCell(colIndex, rowIndex)) && <span className="user-label">{occupiedCells.get(Cell.columnRowToCell(colIndex, rowIndex))}</span>}
                 </td>
               ))}
             </tr>

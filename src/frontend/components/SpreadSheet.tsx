@@ -30,7 +30,7 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
   const [currentCell, setCurrentCell] = useState(currentCellLabel);
   // initialized to false because the user is not editing the cell
   const [currentlyEditing, setCurrentlyEditing] = useState(initEditingStatus);
-  const [formulaString, setFormulaString] = useState(sheetMemoryVO.getCellByLabel(currentCell).getFormulaString())
+  const [formulaString, setFormulaString] = useState(sheetMemoryVO.getCellByLabel(currentCell).parseFormulaString())
   const [resultString, setResultString] = useState(sheetMemoryVO.getCellByLabel(currentCell).getDisplayString())
   const [cells, setCells] = useState(SheetHelper.getSheetDisplayStringsForGUI(sheetMemory));
   const [occupiedCells, setOccupiedCells] = useState(SheetHelper.getOccupiedCells(sheetMemory, currentUser));
@@ -54,7 +54,7 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
 
   const updateDisplayValues = useCallback(() => {
 
-    setFormulaString(getCurrentWorkingCell(currentCell).getFormulaString());
+    setFormulaString(getCurrentWorkingCell(currentCell).parseFormulaString());
     setResultString(getCurrentWorkingCell(currentCell).getDisplayString());
     setStatusString(getStatusString());
     setCells(SheetHelper.getSheetDisplayStringsForGUI(sheetMemoryVO));
@@ -88,18 +88,18 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
           // throws an error if the cell is occupied
           if (occupiedCells.includes(currentCell)) {
             alert("This cell is occupied by another user.");
-            break;
+          } else {
+            // clicking = when not editing will lock the cell
+            sheetClient.lockCell(sheetMemoryVO.id, currentCell, currentUser)
+            .then((lockResult) => {
+              if (!lockResult[0]) {
+                alert(lockResult[1]);
+              } else {
+                setCurrentlyEditing(true);
+                sheetMemoryVO.setNewOccupiedCell(currentCell, currentUser);
+              }
+            });
           }
-          // clicking = when not editing will lock the cell
-          sheetClient.lockCell(sheetMemoryVO.id, currentCell, currentUser)
-          .then((lockResult) => {
-            if (!lockResult[0]) {
-              alert(lockResult[1]);
-            } else {
-              setCurrentlyEditing(true);
-              sheetMemoryVO.setNewOccupiedCell(currentCell, currentUser);
-            }
-          });
         } else {
           // clicking = when editing will unlock the cell
           sheetClient.releaseCell(sheetMemoryVO.id, currentCell, currentUser)
@@ -251,7 +251,7 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
         onClick={onCellClick}
         currentCell={currentCell}
         currentlyEditing={currentlyEditing}
-        occupiedCells={occupiedCells}></SheetHolder>}
+        occupiedCells={sheetMemory.getOccupiedCells()}></SheetHolder>}
       <KeyPad onButtonClick={onButtonClick}
         onCommandButtonClick={onCommandButtonClick}
         currentlyEditing={currentlyEditing}></KeyPad>
