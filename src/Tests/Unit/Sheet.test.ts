@@ -1,4 +1,4 @@
-import Sheet from '../db/Sheet';
+import Sheet from '../../db/Sheet';
 import fs from 'fs';
 import path from 'path';
 

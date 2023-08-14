@@ -1,7 +1,7 @@
-import { ManagerService } from "../service/ManagerService";
-import GetSheetRequest from "../service/request/GetSheetReqeust";
-import LockCellRequest from "../service/request/LockCellRequest";
-import ReferenceCheckReqeust from "../service/request/ReferenceCheckRequest";
+import { ManagerService } from "../../service/ManagerService";
+import GetSheetRequest from "../../service/request/GetSheetReqeust";
+import LockCellRequest from "../../service/request/LockCellRequest";
+import ReferenceCheckReqeust from "../../service/request/ReferenceCheckRequest";
 
 export { };
 

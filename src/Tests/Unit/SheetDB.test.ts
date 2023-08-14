@@ -1,4 +1,4 @@
-import SheetDB from '../db/SheetDB';
+import SheetDB from '../../db/SheetDB';
 
 describe('SheetDB', () => {
     let sheetDB: SheetDB;
