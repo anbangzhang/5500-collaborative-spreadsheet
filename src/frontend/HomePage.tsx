@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ControlPanel from "./ControlPanel";
-import { setCookie } from "./components/CookieUtil";
+import { setCookie } from "./utils/CookieUtil";
 
 function HomePage() {
   const [userName, setUserName] = useState('Anonymous');

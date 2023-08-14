@@ -2,21 +2,18 @@ import React, { SetStateAction, useEffect, useState, useCallback } from "react";
 import Formula from "./Formula";
 import Status from "./Status";
 import KeyPad from "./Keypad";
-import SheetController from "../SheetController";
+import { SheetHelper } from "../utils/SheetHelper";
 import SheetHolder from "./SheetHolder";
 import { ButtonNames } from "../GlobalDefinitions";
 import SheetMemoryVO from "../SheetMemoryVO";
 import { sheetClient } from "../SheetClient";
-import { DefaultValue } from "../../engine/GlobalDefinitions";
-import { setCookie } from "./CookieUtil";
+import { setCookie } from "../utils/CookieUtil";
 
 interface SpreadSheetProps {
   sheetMemory: SheetMemoryVO;
   currentUser: string;
   currentCellLabel: string;
 }
-
-let spreadSheetController: SheetController = new SheetController(DefaultValue.column, DefaultValue.row);
 
 export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: SpreadSheetProps) {
 
@@ -35,8 +32,8 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
   const [currentlyEditing, setCurrentlyEditing] = useState(initEditingStatus);
   const [formulaString, setFormulaString] = useState(sheetMemoryVO.getCellByLabel(currentCell).getFormulaString())
   const [resultString, setResultString] = useState(sheetMemoryVO.getCellByLabel(currentCell).getDisplayString())
-  const [cells, setCells] = useState(spreadSheetController.getSheetDisplayStringsForGUI());
-  const [occupiedCells, setOccupiedCells] = useState(spreadSheetController.getOccupiedCells(currentUser));
+  const [cells, setCells] = useState(SheetHelper.getSheetDisplayStringsForGUI(sheetMemory));
+  const [occupiedCells, setOccupiedCells] = useState(SheetHelper.getOccupiedCells(sheetMemory, currentUser));
 
   const getStatusString = useCallback(() => {
     if (currentlyEditing) {
@@ -60,10 +57,10 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
     setFormulaString(getCurrentWorkingCell(currentCell).getFormulaString());
     setResultString(getCurrentWorkingCell(currentCell).getDisplayString());
     setStatusString(getStatusString());
-    setCells(spreadSheetController.getSheetDisplayStringsForGUI());
-    setOccupiedCells(spreadSheetController.getOccupiedCells(currentUser));
+    setCells(SheetHelper.getSheetDisplayStringsForGUI(sheetMemoryVO));
+    setOccupiedCells(SheetHelper.getOccupiedCells(sheetMemoryVO, currentUser));
     setCookie('currentCell', currentCell, 1);
-  }, [currentCell, currentUser, getCurrentWorkingCell, getStatusString]);
+  }, [currentCell, currentUser, getCurrentWorkingCell, getStatusString, sheetMemoryVO]);
 
     const id = sheetMemoryVO.id;
 
@@ -74,8 +71,6 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
         sheetClient.getSheet(id!)
         .then((sheet: SetStateAction<SheetMemoryVO>) => {
           setSheetMemoryVO(sheet);
-          // update sheet memory in controller
-          spreadSheetController.setSheetMemory(sheetMemoryVO);
           updateDisplayValues();
         })
         .catch((error: SetStateAction<string | null>) => {

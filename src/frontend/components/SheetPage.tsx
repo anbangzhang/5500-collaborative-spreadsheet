@@ -2,7 +2,7 @@ import { useState, useEffect, SetStateAction } from "react";
 import SheetMemoryVO from "../SheetMemoryVO";
 import { sheetClient } from "../SheetClient";
 import SpreadSheet from "./SpreadSheet";
-import { getCookie } from "./CookieUtil";
+import { getCookie } from "../utils/CookieUtil";
 
 function SheetPage(props: any) {
     const [loading, setLoading] = useState(false);
