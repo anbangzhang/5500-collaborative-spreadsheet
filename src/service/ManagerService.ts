@@ -154,6 +154,10 @@ export class ManagerService {
             formulaBuilder.removeToken();
         } else if (operator === "AC") {
             formulaBuilder.setFormula([]);
+        } else if (operator === "#f"){
+            formulaBuilder.addToken("1");
+            formulaBuilder.addToken("/");
+            formulaBuilder.addToken("(");
         } else {
             formulaBuilder.addToken(operator);
         }

@@ -441,5 +441,32 @@ describe("FormulaEvaluator", () => {
       });
     });
 
+    describe("when the formula is 1 / ( 15 + 5 ) x 5", () => {
+      it("returns 0.25", () => {
+        const formula = ["1", "/", "(", "15", "+", "5", ")", "*", "5"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result;
+        let error = recalc.error;
+
+        expect(result).toEqual(0.25);
+        expect(error).toEqual("");
+      });
+    });
+
+    describe("when the formula is 2 ^ 2 + 4 ^ 3 + sin( 10 + 20) * 5", () => {
+      it("returns 132.5", () => {
+        const formula = ["#s", "2", ")", "+", "#d", "4", ")", "+", "#k", "10", "+", "20", ")", "*", "5"];
+        recalc.evaluate(formula);
+
+        let result = recalc.result; 
+        let error = recalc.error;
+
+        expect(result).toEqual(63.05985);
+        expect(error).toEqual("");
+      });
+    });
+
   });
+
 });

@@ -62,13 +62,13 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
     setCookie('currentCell', currentCell, 1);
   }, [currentCell, currentUser, getCurrentWorkingCell, getStatusString, sheetMemoryVO]);
 
-    const id = sheetMemoryVO.id;
+  const id = sheetMemoryVO.id;
 
-    useEffect(() => {
+  useEffect(() => {
       // check if the url contains a user name
           
-      const interval = setInterval(() => {
-        sheetClient.getSheet(id!)
+    const interval = setInterval(() => {
+      sheetClient.getSheet(id!)
         .then((sheet: SetStateAction<SheetMemoryVO>) => {
           setSheetMemoryVO(sheet);
           updateDisplayValues();
@@ -76,9 +76,9 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
         .catch((error: SetStateAction<string | null>) => {
           console.log(error);
         });
-      }, 500);
-      return () => clearInterval(interval);
-    }, [id, sheetMemoryVO, updateDisplayValues]);
+    }, 500);
+    return () => clearInterval(interval);
+  }, [id, sheetMemoryVO, updateDisplayValues]);
   
 
   function onCommandButtonClick(command: string): void {
@@ -120,9 +120,7 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
           .then((updateResult) => {
             if (!updateResult) {
               alert('Oops, the cell is not happy to update. Please try again. :)');
-              return;
             }
-            return;
           })
       }
     } else {
@@ -131,9 +129,7 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
           .then((updateResult) => {
             if (!updateResult) {
               alert('Oops, the cell is not happy to update. Please try again. :)');
-              return;
             }
-            return;
           })
       }
     }
@@ -148,55 +144,26 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
    * @param event
    * 
    * */
-     function onButtonClick(event: React.MouseEvent<HTMLButtonElement>): void {
+  function onButtonClick(event: React.MouseEvent<HTMLButtonElement>): void {
 
-      const text = event.currentTarget.textContent;
-      if (text === '1' || text === '2' || text === '3' || text === '4' || text === '5' || text === '6' || text === '7' || text === '8' || text === '9' || text === '0' ) {
-        if (!currentlyEditing) {
-          // get the occupied cells from the sheet memory
-          // throws an error if the cell is occupied
-          let occupiedCells = sheetMemoryVO.getOccupiedCells();
-          if (occupiedCells.get(currentCell) !== undefined && occupiedCells.get(currentCell) !== currentUser) {
-            alert("This cell is occupied by another user.");
-          }
-          // clicking number buttons when not editing will lock the cell
-          sheetClient.lockCell(sheetMemoryVO.id, currentCell, currentUser)
-            .then((lockResult) => {
-              if (!lockResult[0]) {
-                alert(lockResult[1]);
-                return;
-              }
-            })
-          sheetClient.updateCell(sheetMemoryVO.id, currentCell, text!, currentUser)
-            .then((updateResult) => {
-              if (!updateResult) {
-                alert("Cannot update cell.");
-                return;
-              }
-              return;
-            })
-          setCurrentlyEditing(true);
-          //spreadSheetController.setEditStatus(true);
-          //setStatusString(spreadSheetController.getEditStatusString());
-          sheetMemoryVO.setNewOccupiedCell(currentCell, currentUser);
-        }
-      }
-
+    let text = event.currentTarget.textContent!;
+    // change × to *, change ÷ to /
+    if (text === '×') {
+      text = '*';
+    } else if (text === '÷') {
+      text = '/';
+    }
     if (currentlyEditing) {
       // clicking number or operator buttons when editing will call updateCell api
-      sheetClient.updateCell(sheetMemoryVO.id, currentCell, text!, currentUser)
+      sheetClient.updateCell(sheetMemoryVO.id, currentCell, text, currentUser)
         .then((updateResult) => {
           if (!updateResult) {
-            alert("Cannot update cell.");
-            return;
+            alert("Oops, the cell is not happy to update. Please try again. :)");
           }
-          return;
         })
     }
 
-      //spreadSheetController.setEditStatus(true);
-  
-      updateDisplayValues();
+    updateDisplayValues();
   }
 
   /**
@@ -207,38 +174,36 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
    * If the edit status is true then it will send the token to the machine.
    * If the edit status is false then it will ask the machine to update the current formula.
    */
-     function onCellClick(event: React.MouseEvent<HTMLButtonElement>): void {
-      const cellLabel = event.currentTarget.getAttribute("cell-label");
-      // calculate the current row and column of the clicked on cell
-      //const editStatus = spreadSheetController.getEditStatus();
-      let realCellLabel = cellLabel ? cellLabel : "";
+  function onCellClick(event: React.MouseEvent<HTMLButtonElement>): void {
+    const cellLabel = event.currentTarget.getAttribute("cell-label");
+    // calculate the current row and column of the clicked on cell
+    //const editStatus = spreadSheetController.getEditStatus();
+    let realCellLabel = cellLabel ? cellLabel : "";
   
   
-      // if the edit status is true then add the token to the machine
-      if (currentlyEditing) {
-        // first check circular dependency
-        sheetClient.referenceCheck(sheetMemoryVO.id, currentCell, realCellLabel, currentUser)
-          .then((okToAdd) => {
-            if (okToAdd[0]) {
-              sheetClient.updateCell(sheetMemoryVO.id, currentCell, realCellLabel, currentUser)
-                .then((updateResult) => {
-                  if (!updateResult) {
-                    alert("Cannot update cell.");
-                  }
-                })
-            } else {
-              alert(okToAdd[1]);
-            }
-            updateDisplayValues();
-          })
+    // if the edit status is true then add the token to the machine
+    if (currentlyEditing) {
+      // first check circular dependency
+      sheetClient.referenceCheck(sheetMemoryVO.id, currentCell, realCellLabel, currentUser)
+        .then((okToAdd) => {
+          if (okToAdd[0]) {
+            sheetClient.updateCell(sheetMemoryVO.id, currentCell, realCellLabel, currentUser)
+              .then((updateResult) => {
+                if (!updateResult) {
+                  alert("Cannot update cell.");
+                }
+              })
+          } else {
+            alert(okToAdd[1]);
+          }
+          updateDisplayValues();
+        })
 
-      }
+    } else {
       // if the edit status is false then set the current cell to the clicked on cell
-      else {
-        //spreadSheetController.setWorkingCellByLabel(realCellLabel);
-        setCurrentCell(cellLabel!);
-        updateDisplayValues();
-      }
+      setCurrentCell(cellLabel!);
+      updateDisplayValues();
+    }
   
   }
 

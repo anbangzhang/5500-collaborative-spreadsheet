@@ -9,7 +9,6 @@
 // 8. create a test
 // 9. create a deployment
 
-import fs from 'fs';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
