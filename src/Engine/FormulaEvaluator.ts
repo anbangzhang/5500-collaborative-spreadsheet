@@ -264,15 +264,15 @@ export class FormulaEvaluator {
       return [(intermediate_result * intermediate_result), ""];
     } else if (reference === "d") {
       return [(intermediate_result * intermediate_result * intermediate_result), ""];
-    } else if (reference === "f") {
+    } /*else if (reference === "f") {
       return [(1 / intermediate_result), ""];
-    } else if (reference === "g") {
+    } */ else if (reference === "g") {
       return [Math.sqrt(intermediate_result), ""];
     } else if (reference === "h") {
       return [Math.cbrt(intermediate_result), ""];
-    } else if (reference === "j") {
+    } /*else if (reference === "j") {
       return [Math.random(), ""];
-    } else if (reference === "k") {
+    } */ else if (reference === "k") {
       return [Math.sin(intermediate_result), ""];
     } else if (reference === "l") {
       return [Math.cos(intermediate_result), ""];
