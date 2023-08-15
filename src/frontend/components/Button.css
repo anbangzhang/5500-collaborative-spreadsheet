@@ -1,0 +1,69 @@
+.button-number {
+    background-color: #749bc2;
+    color: black;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: large;
+    width: 60px;
+    height:40px;
+    border-radius: 25px / 50px; /* Horizontal radius / Vertical radius */
+    cursor: pointer;
+  }
+  
+  .button-operator {
+    background-color: #4682a9;
+    color: white;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: large;
+    width: 60px;
+    height: 40px;
+    border-radius: 25px / 50px; /* Horizontal radius / Vertical radius */
+    cursor: pointer;
+  }
+  
+  .button-edit-end {
+    background-color: #f6f4eb;
+    color: black;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: large;
+    width: 60px;
+    height: 40px;
+    border-radius: 25px / 50px; /* Horizontal radius / Vertical radius */
+    cursor: pointer;
+  }
+  
+  .button-edit-start {
+    background-color: #ffd9b7;
+    color: black;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: large;
+    width: 60px;
+    height: 40px;
+    border-radius: 25px / 50px; /* Horizontal radius / Vertical radius */
+    cursor: pointer;
+  }
+  
+  .button-control {
+    background-color: #000000;
+    border: 5px solid #000000;
+    color: rgb(255, 255, 255);
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: large;
+  
+    width: 80px;
+    height: 60px;
+  }

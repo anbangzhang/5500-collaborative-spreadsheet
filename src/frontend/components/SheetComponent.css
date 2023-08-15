@@ -1,0 +1,88 @@
+.cell {
+    border: 1px solid black;
+    width: 140px;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: courier;
+    background-color: #faf0e4;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    z-index: 1;
+}
+
+.cell-selected {
+    border: 1px solid rgb(160, 52, 52);
+    width: 140px;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: courier;
+    background-color: #9bcdd2;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    z-index: 1;
+}
+
+.cell-editing {
+    border: 1px solid rgb(160, 52, 52);
+    width: 140px;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: courier;
+    background-color: #ffdede;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    z-index: 1;
+}
+
+.cell-locked {
+    border: 1px solid yellow;
+    width: 140px;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: courier;
+    background-color: #ff8551;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    z-index: 1;
+}
+
+.user-label {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    transform: translateX(-50%);
+    background-color: #e74c3c;
+    color: white;
+    padding: 2px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    z-index: 2;
+}
