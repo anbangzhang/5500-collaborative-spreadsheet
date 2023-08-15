@@ -66,7 +66,7 @@ function SheetComponent({ cellsValues, onClick, currentCell, currentlyEditing, o
                 {rowIndex + 1}
               </td>
               {row.map((cell, colIndex) => (
-                <td key={colIndex}>
+                <td key={colIndex} style={{position:"relative"}}>
                   <button
                     className={getCellClass(Cell.columnRowToCell(colIndex, rowIndex))}
                     onClick={onClick}

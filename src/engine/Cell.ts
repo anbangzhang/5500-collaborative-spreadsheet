@@ -124,7 +124,11 @@ export class Cell {
   getDisplayString(): string {
     // successful evaluation has occurred
     if (this._error === "" && this._formula.length > 0) {
-      return this._value.toString();
+      let str = this._value.toString();
+      if (str.includes(".") && str.split(".")[1].length > 5) {
+        return this._value.toFixed(5);
+      }
+      return str;
     }
 
     // Check to see if cell is empty

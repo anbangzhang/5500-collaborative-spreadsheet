@@ -76,7 +76,8 @@ export function ControlPanel( {userName}: ControlPanelProps) {
                                 } else {
                                     createSheet(newSheetName, userName);
                                 }
-                            }}>
+                            }}
+                            style={{position: "relative", left: "80px"}}>
                                 Create new sheet
                             </button>
                         </td>

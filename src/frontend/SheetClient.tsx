@@ -134,11 +134,11 @@ function convertToSheetMemoryVO(json: any): SheetMemoryVO {
     for (let i = 0; i < sheet_column; i++) {
         for (let j = 0; j < sheet_row; j++) {
             let cell = new CellVO();
-            cell.setFormula(json.cells[i][j]._formula);
-            cell.setValue(json.cells[i][j]._value);
-            cell.setError(json.cells[i][j]._error);
-            cell.setDisplayString(json.cells[i][j]._displayString);
-            cell.setLabel(json.cells[i][j]._label);
+            cell.setFormula(json.cells[i][j].formula);
+            cell.setValue(json.cells[i][j].value);
+            cell.setError(json.cells[i][j].error);
+            cell.setDisplayString(json.cells[i][j].display_string);
+            cell.setLabel(json.cells[i][j].label);
             sheet_memory.setCellByColumnRow(i, j, cell);
         }
     }
