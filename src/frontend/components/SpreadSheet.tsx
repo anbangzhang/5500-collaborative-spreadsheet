@@ -9,6 +9,8 @@ import SheetMemoryVO from "../SheetMemoryVO";
 import { sheetClient } from "../SheetClient";
 import { setCookie } from "../utils/CookieUtil";
 
+import './SpreadSheet.css'
+
 interface SpreadSheetProps {
   sheetMemory: SheetMemoryVO;
   currentUser: string;
@@ -209,17 +211,25 @@ export function SpreadSheet({ sheetMemory, currentUser, currentCellLabel }: Spre
 
 
   return (
-    <div>
-      <Formula formulaString={formulaString} resultString={resultString}></Formula>
-      <Status statusString={statusString}></Status>
-      {<SheetHolder cellsValues={cells}
-        onClick={onCellClick}
-        currentCell={currentCell}
-        currentlyEditing={currentlyEditing}
-        occupiedCells={SheetHelper.getOccupiedCellsInMap(sheetMemoryVO, currentUser)}></SheetHolder>}
-      <KeyPad onButtonClick={onButtonClick}
-        onCommandButtonClick={onCommandButtonClick}
-        currentlyEditing={currentlyEditing}></KeyPad>
+    <div className="container">
+      <div>
+        <Formula formulaString={formulaString} resultString={resultString}></Formula>
+      </div>
+      <div>
+        <Status statusString={statusString}></Status>
+      </div>
+      <div>
+        {<SheetHolder cellsValues={cells}
+          onClick={onCellClick}
+          currentCell={currentCell}
+          currentlyEditing={currentlyEditing}
+          occupiedCells={SheetHelper.getOccupiedCellsInMap(sheetMemoryVO, currentUser)}></SheetHolder>}
+      </div>
+      <div>
+        <KeyPad onButtonClick={onButtonClick}
+          onCommandButtonClick={onCommandButtonClick}
+          currentlyEditing={currentlyEditing}></KeyPad>
+      </div>
     </div>
   )
 }

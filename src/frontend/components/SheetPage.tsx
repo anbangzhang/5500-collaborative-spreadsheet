@@ -4,6 +4,8 @@ import { sheetClient } from "../SheetClient";
 import SpreadSheet from "./SpreadSheet";
 import { getCookie } from "../utils/CookieUtil";
 
+import "./SheetPage.css";
+
 function SheetPage(props: any) {
     const [loading, setLoading] = useState(false);
     const [sheet, setSheet] = useState<SheetMemoryVO | null>(null);
@@ -11,9 +13,9 @@ function SheetPage(props: any) {
     let currentURL = window.location.href;
     const returnLoggedInUser = (user: string) => {
         if (user.length > 0) {
-            return 'Logged in as ' + user;
+            return 'Hello! You are using this spreadsheet as: ' + user;
         } else {
-            return 'Logged in as Anonymous';
+            return 'Hello! You are using this spreadsheet as Anonymous';
         }
     }
 
@@ -44,16 +46,18 @@ function SheetPage(props: any) {
     }, [id]);
 
     return (
-        <div>
+        <div className="container">
             {loading && (
                 <div className="center-page">
                     <span className="spinner primary"></span>
                         <p>Loading...</p>
                 </div>
             )}
-            <h1>{returnLoggedInUser(user)}</h1>
-            <h1>{sheet?.name}</h1>
-            <h2>Owner: {sheet?.owner}</h2>
+            <div className="text">
+                <h2>{returnLoggedInUser(user)}</h2>
+                <h3>{sheet?.name}</h3>
+                <h3>This spreadsheet is created by: {sheet?.owner}</h3>
+            </div>
             {sheet && <SpreadSheet sheetMemory={sheet} currentUser={user} currentCellLabel={currentCell}/>}
         </div>
     )

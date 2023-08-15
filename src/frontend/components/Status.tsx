@@ -12,7 +12,7 @@ interface StatusProps {
 
 const Status: React.FC<StatusProps> = ({ statusString }) => {
   return (
-    <div className="status">
+    <div className="formula-text">
       <span data-testid="StatusComponent">{statusString}</span>
     </div>
   );

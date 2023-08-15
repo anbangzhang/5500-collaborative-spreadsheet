@@ -25,7 +25,7 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
     return "button-edit-start";
   } // getDoneButtonClass
 
-
+  let doneButtonText = currentlyEditing ? ButtonNames.done : ButtonNames.edit;
   // the buttons use one of three classes
   // numberButton, operatorButton, and otherButton
   return (
@@ -255,7 +255,7 @@ function KeyPad({ onButtonClick, onCommandButtonClick, currentlyEditing }: KeyPa
           dataTestId="decimal-button"
         />
         <Button
-          text="="
+          text={doneButtonText}
           isDigit={true}
           onClick={() => onCommandButtonClick(ButtonNames.edit_toggle)}
           className={(getDoneButtonClass())}

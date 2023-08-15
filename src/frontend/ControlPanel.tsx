@@ -50,8 +50,9 @@ export function ControlPanel( {userName}: ControlPanelProps) {
     }, [getSheetList]);
 
     function getControlButtons() {
-        return <div>
-            <h4>Control Panel</h4>
+        return <div className="control panel">
+            <h4>Try clicking the 'edit' button</h4>
+            <h4>...Or create your own spreadsheet!</h4>
             <table>
                 <tbody>
                     <tr>
@@ -202,7 +203,7 @@ export function ControlPanel( {userName}: ControlPanelProps) {
 
     return (
         <div>
-            <h2>Control Panel</h2>
+            <h2>Your spreadsheets</h2>
             {getControlButtons()}
             {showSheetList && getSheetsDisplay()}
         </div>

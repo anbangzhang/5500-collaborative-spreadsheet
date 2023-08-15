@@ -70,6 +70,7 @@ function HomePage() {
         <header className="App-header">
             {getTitle()}
             {getLoginComponent()}
+            <br />
             {getControlPanel()}
         </header>
     </div>
