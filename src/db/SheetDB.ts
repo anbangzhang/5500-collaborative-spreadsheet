@@ -100,8 +100,8 @@ export class SheetDB {
     public deleteSheetById(id: string): void {
         const index = this._sheets.findIndex(sheet => sheet.getId() == id);
         if (index >= 0) {
-            this._sheets.filter(sheet => sheet.getId() != id);
-            this._sheetDetails.filter(detail => detail.getId() != id);
+            this._sheets = this._sheets.filter(sheet => sheet.getId() !== id);
+            this._sheetDetails = this._sheetDetails.filter(detail => detail.getId() !== id);
             this.saveSheet();
             this.saveSheetDetail();
         }

@@ -21,7 +21,7 @@ interface Sheet {
 export function ControlPanel( {userName}: ControlPanelProps) {
     const [sheets, setSheets] = useState<Sheet[]>([]);
     const [newSheetName, setNewSheetName] = useState<string>('');
-    const [showSheetList, setShowSheetList] = useState<boolean>(false);
+
 
     const getSheetList = useCallback(() => {
         const requestURL = baseURL + '/getSheetList'
@@ -71,7 +71,7 @@ export function ControlPanel( {userName}: ControlPanelProps) {
                         <td>
                             <button onClick={() => {
                                 if (newSheetName === '') {
-                                    alert("Please enter a name for the new sheet!");
+                                    alert("You might want a name for your spreadsheet!");
                                     return;
                                 } else {
                                     createSheet(newSheetName, userName);
@@ -81,15 +81,6 @@ export function ControlPanel( {userName}: ControlPanelProps) {
                                 Create new sheet
                             </button>
                         </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button onClick={() => setShowSheetList(true)}>List all sheets</button>
-                        </td>
-                        <td>
-                            <button onClick={() => setShowSheetList(false)}>Clear List</button>
-                        </td>
-
                     </tr>
                 </tbody>
             </table>
@@ -206,7 +197,7 @@ export function ControlPanel( {userName}: ControlPanelProps) {
         <div>
             <h2>Your spreadsheets</h2>
             {getControlButtons()}
-            {showSheetList && getSheetsDisplay()}
+            {getSheetsDisplay()}
         </div>
     );
 
