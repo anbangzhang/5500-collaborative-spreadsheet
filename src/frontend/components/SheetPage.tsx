@@ -59,6 +59,9 @@ function SheetPage(props: any) {
                 <h3>This spreadsheet is created by: {sheet?.owner}</h3>
             </div>
             {sheet && <SpreadSheet sheetMemory={sheet} currentUser={user} currentCellLabel={currentCell}/>}
+            <button>
+                <a href="/">Back to Home Page</a>
+            </button>
         </div>
     )
 }
